@@ -1,8 +1,9 @@
 package itba.eda.pipedreams.tablelogic;
+import itba.eda.pipedreams.pipelogic.Pipe;
 
 public class Tile {
 	
-	//private Pipe pipe;
+	private Pipe pipe;
 	private boolean blocked;
 	
 	int x;
@@ -16,12 +17,16 @@ public class Tile {
 		this.y = y;
 	}
 	
-	public boolean isEmpty(){
+	public boolean isLegal(){
 		return (/*pipe == null &&*/ blocked == false);
 	}
 	
 	public boolean isBlocked(){
 		return blocked;
+	}
+	
+	public boolean hasPipe(){
+		return (pipe != null);
 	}
 	
 }

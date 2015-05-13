@@ -1,5 +1,7 @@
-public static class PipeFactory {
-	Pipe[] pipes = new Pipe[ new Pipe() { //W <-> N
+package itba.eda.pipedreams.pipelogic;
+
+public class PipeFactory {
+	private Pipe[] pipes = new Pipe[ new Pipe() { //W <-> N
 
 	},new Pipe() {	//N <-> E
 		boolean canItFlow(Dir from) {
@@ -57,7 +59,7 @@ public static class PipeFactory {
 		}
 	} ];
 
-	public getPipe(int pipeType) {
+	public Pipe getPipe(int pipeType) {
 		return pipes[pipeType];
 	}
 }
