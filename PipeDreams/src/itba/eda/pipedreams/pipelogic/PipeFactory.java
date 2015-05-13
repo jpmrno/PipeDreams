@@ -1,65 +1,81 @@
 package itba.eda.pipedreams.pipelogic;
 
+import itba.eda.pipedreams.tablelogic.Dir;
+
 public class PipeFactory {
-	private Pipe[] pipes = new Pipe[ new Pipe() { //W <-> N
-
-	},new Pipe() {	//N <-> E
-		boolean canFlow(Dir from) {
-			return from == Dir.NORTH || from == Dir.EAST;
-		}
-
-		Dir flow(Dir from) {
-			return from == Dir.NORTH ? Dir.EAST : Dir.NORTH;
-		}
-	},new Pipe() {	//S <-> E
-		boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.EAST;
-		}
-
-		Dir flow(Dir from) {
-			return from == Dir.SOUTH ? Dir.EAST : Dir.SOUTH;
-		}
-	},new Pipe() {	//S <-> W
-		boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.WEST;
-		}
-
-		Dir flow(Dir from) {
-			return from == Dir.SOUTH ? Dir.WEST : Dir.SOUTH;
-		}
-	},new Pipe() {	//S <-> N
-		boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.NORTH;
-		}
-
-		Dir flow(Dir from) {
-			return from == Dir.SOUTH ? Dir.NORTH : Dir.SOUTH;
-		}
-	},new Pipe() {	//W <-> N
-		boolean canFlow(Dir from) {
+	private static final Pipe[] pipes = { new Pipe() { //W <-> N
+		public boolean canFlow(Dir from) {
 			return from == Dir.WEST || from == Dir.NORTH;
 		}
 
-		Dir flow(Dir from) {
+		public Dir flow(Dir from) {
+			return from == Dir.WEST ? Dir.NORTH : Dir.WEST;
+		}
+	},new Pipe() {	//N <-> E
+		public boolean canFlow(Dir from) {
+			return from == Dir.NORTH || from == Dir.EAST;
+		}
+
+		public Dir flow(Dir from) {
+			return from == Dir.NORTH ? Dir.EAST : Dir.NORTH;
+		}
+	},new Pipe() {	//S <-> E
+		public boolean canFlow(Dir from) {
+			return from == Dir.SOUTH || from == Dir.EAST;
+		}
+
+		public Dir flow(Dir from) {
+			return from == Dir.SOUTH ? Dir.EAST : Dir.SOUTH;
+		}
+	},new Pipe() {	//S <-> W
+		public boolean canFlow(Dir from) {
+			return from == Dir.SOUTH || from == Dir.WEST;
+		}
+
+		public Dir flow(Dir from) {
+			return from == Dir.SOUTH ? Dir.WEST : Dir.SOUTH;
+		}
+	},new Pipe() {	//S <-> N
+		public boolean canFlow(Dir from) {
+			return from == Dir.SOUTH || from == Dir.NORTH;
+		}
+
+		public Dir flow(Dir from) {
+			return from == Dir.SOUTH ? Dir.NORTH : Dir.SOUTH;
+		}
+	},new Pipe() {	//W <-> N
+		public boolean canFlow(Dir from) {
+			return from == Dir.WEST || from == Dir.NORTH;
+		}
+
+		public Dir flow(Dir from) {
 			return from == Dir.WEST ? Dir.NORTH : Dir.WEST;
 		}
 	},new Pipe() {	//S <-> N, W <-> E
-		boolean canFlow(Dir from) {
+		public boolean canFlow(Dir from) {
 			return true;
 		}
 
-		Dir flow(Dir from) {
+		public Dir flow(Dir from) {
 			if(from == Dir.NORTH)
 				return Dir.SOUTH;
 			else if(from == Dir.SOUTH)
 				return Dir.NORTH;
 			else if(from == Dir.WEST)
 				return Dir.EAST;
-			return DIR.WEST;
+			return Dir.WEST;
 		}
-	} ];
+	} };
+	
+	private PipeFactory() {
+		
+	}
 
-	public Pipe getPipe(int pipeType) {
+	public static Pipe getPipe(int pipeType) {
 		return pipes[pipeType];
+	}
+	
+	public static int getPipeTypesSize() {
+		return pipes.length;
 	}
 }

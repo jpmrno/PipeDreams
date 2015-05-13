@@ -7,30 +7,32 @@ public enum Dir {
 	WEST;
 	
 	public static Dir getBySymbol(String str){
-		
-		Dir ret;
 		switch (str){
-			
 			case "N":
-				ret = NORTH;
-				break;
-			
+				return NORTH;		
 			case "S":
-				ret = SOUTH;
-				break;
-				
+				return SOUTH;
 			case "W":
-				ret = WEST;
-				break;
-				
+				return WEST;
 			case "E":
-				ret = EAST;
-				break;
-				
+				return EAST;
 			default:
-				ret = null;
+				return null;
 		}
-		
-		return ret;
+	}
+	
+	public static Dir invert(Dir dir) {
+		switch (dir){
+		case NORTH:
+			return SOUTH;		
+		case SOUTH:
+			return NORTH;
+		case WEST:
+			return EAST;
+		case EAST:
+			return WEST;
+		default:
+			return null;
+		}
 	}
 }
