@@ -11,5 +11,17 @@ public class Tile {
 	public Tile(int x, int y){
 		//this.pipe = null;
 		this.blocked = false;
+		
+		this.x = x;
+		this.y = y;
 	}
+	
+	public boolean isEmpty(){
+		return (/*pipe == null &&*/ blocked == false);
+	}
+	
+	public boolean isBlocked(){
+		return blocked;
+	}
+	
 }
