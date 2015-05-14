@@ -6,16 +6,34 @@ public class Tile {
 	private Pipe pipe;
 	private boolean blocked;
 	
-	Point pos;
+	int x;
+	int y;
 	
 	public Tile(int x, int y){
-		//this.pipe = null;
+		this.pipe = null;
 		this.blocked = false;
-		pos = new Point(x,y);
+		this.x = x;
+		this.y = y;
+	}
+	
+	public Tile getNext(Dir dir){
+		switch (dir){
+		
+			case NORTH:
+				return Board.getInstance().getTile(x, y - 1);
+			case SOUTH:
+				return Board.getInstance().getTile(x, y + 1);
+			case EAST:
+				return Board.getInstance().getTile(x + 1, y);
+			case WEST:
+				return Board.getInstance().getTile(x - 1, y);
+			default:
+				return null;
+		}
 	}
 	
 	public boolean isLegal(){
-		return (/*pipe == null &&*/ blocked == false);
+		return (pipe == null && blocked == false);
 	}
 	
 	public boolean isBlocked(){
@@ -26,29 +44,22 @@ public class Tile {
 		return (pipe != null);
 	}
 	
+	public void setPipe(Pipe pipe){
+		this.pipe = pipe;
+	}
+	
+	public void removePipe(){
+		this.pipe = null;
+	}
+	
 	public int getPosX() {
-		return pos.getX();
+		return x;
 	}
 	
 	public int getPosY() {
-		return pos.getY();
+		return y;
 	}
 	
-	public Point getNext(Dir to) {
-		switch (to){
-		case NORTH:
-			return new Point(pos.getX()+1, pos.getY());		
-		case SOUTH:
-			return new Point(pos.getX()-1, pos.getY());
-		case WEST:
-			return new Point(pos.getX(), pos.getY()+1);
-		case EAST:
-			return new Point(pos.getX(), pos.getY()-1);
-		default:
-			return null;
-		}
-	}
-
 	public Pipe getPipe() {
 		return pipe;
 	}

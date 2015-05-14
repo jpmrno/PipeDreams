@@ -5,62 +5,97 @@ import java.util.LinkedList;
 
 import itba.eda.pipedreams.pipelogic.Pipe;
 import itba.eda.pipedreams.pipelogic.PipeBox;
+import itba.eda.pipedreams.pipelogic.PipeFactory;
 import itba.eda.pipedreams.tablelogic.Board;
 import itba.eda.pipedreams.tablelogic.Dir;
-import itba.eda.pipedreams.tablelogic.Point;
 import itba.eda.pipedreams.tablelogic.Tile;
 
 public class Engine {
+	
+	public static int X_PIPE_ID = 6;
+	
+	private Algorithm used_algorithm;
+	
 	private PipeBox pipeBox;
 	private Board board;
-	private Dir initialFlow;
 	
-	public Engine(int sizeX, int sizeY, int startX, int startY, String dir) {
+	public Engine(Algorithm alg, int sizeX, int sizeY, int startX, int startY, String dir) {
+		
 		pipeBox = new PipeBox();
-		board = new Board(sizeX, sizeY);
-		initialFlow = Dir.getBySymbol(dir);
+		
+		board = Board.getInstance();
+		board.loadBoard(sizeX, sizeY);
+		
+		board.setFlow(startX, startY, Dir.getBySymbol(dir));
+	
+		used_algorithm = alg;
 	}
 	
 	public void start() {
-		Deque<Tile> longestPath = new LinkedList<Tile>();
-		Deque<Tile> currPath = new LinkedList<Tile>();
-		runRec(currPath, longestPath, Dir.invert(initialFlow));
-	}
-
-	//TODO probablemente sea mejor ver la posicion a la cual voy a ir para no tener que devolver booleanos porque como diferenciariamos el caso en el que estoy volviendo por un camino y cuando volvi del borde de la matriz
-	private boolean runRec(Deque<Tile> currPath, Deque<Tile> longestPath, Dir from) {
-		Tile last = currPath.getLast();
-		Point current = last.getNext(from);
 		
-		if(!board.withinLimits(current)) {
-			return true;
-		} else if(last.isBlocked()) {
-			if(!last.hasPipe())
-				return false;
-			else if(last.getPipe() == pipeBox.getItem(6)); //TODO Comparacion del pipe cruz
-		}
+		//TODO: Notify frontend observers
+		Deque<Pipe> longestPath = new LinkedList<Pipe>();
+		Deque<Pipe> currPath = new LinkedList<Pipe>();
 		
-		for(int i=0; i < pipeBox.getSize(); i++) {
-			if(pipeBox.hasItem(i)) {
-				Pipe pipe = pipeBox.getItem(i);
-				if(pipe.canFlow(from)) {
-					
-					pipeBox.remove(i);
-					runRec(currPath, longestPath, pipeBox.getItem(i).flow(from)); //TODO: Se puede abstraer mas
-					pipeBox.add(i);
-				}
-			}
+		Tile origin = board.getTile(board.getXFlow(), board.getYFlow());
+		
+		switch (used_algorithm){
+			
+			case RecursiveBacktracking:
+				RecursiveBacktracking(origin.getNext(board.getDirFlow()), board.getDirFlow(), currPath, longestPath);
+				break;
 		}
 	}
 	
-//	private static class TileNode {
-//		private int pipeType;
-//		private int posX, posY;
-//		
-//		public TileNode(int pipeType, int posX, int posY) {
-//			this.pipeType = pipeType;
-//			this.posX = posX;
-//			this.posY = posY;
-//		}
-//	}
+	public void RecursiveBacktracking(Tile destiny_tile, Dir destiny_dir, Deque<Pipe> current, Deque<Pipe> longest){
+		
+		Pipe new_pipe;
+		Dir new_destiny;
+		
+		//Solution
+		if (destiny_tile == null){
+			if(current.size() > longest.size())
+				System.out.println("TODO: Copy new solution");
+			return;
+		}
+		
+		//Blocked
+		if (destiny_tile.isBlocked())
+			return;
+		
+		//Optimization: No more pipes
+		
+		//There's a pipe
+		if (destiny_tile.hasPipe()){
+			if (destiny_tile.getPipe().equals(PipeFactory.getPipe(X_PIPE_ID))){
+				current.push(destiny_tile.getPipe());
+				RecursiveBacktracking(destiny_tile.getNext(destiny_dir), destiny_dir, current, longest);
+				current.pop();
+			}
+			return;
+		}
+		
+		for (int i = 0; i < pipeBox.getSize(); i++){
+			
+			new_pipe = pipeBox.getItem(i);
+			new_destiny = new_pipe.flow(destiny_dir);
+			
+			if (pipeBox.hasItem(i) && new_pipe.canFlow(destiny_dir)){
+				
+				pipeBox.remove(i);
+				destiny_tile.setPipe(new_pipe);
+				current.push(new_pipe);
+				
+				RecursiveBacktracking(destiny_tile.getNext(new_destiny), new_destiny, current, longest);
+				
+				current.pop();
+				destiny_tile.removePipe();
+				pipeBox.add(i);
+			}
+		}
+		
+		
+		
+	}
+	
 }
