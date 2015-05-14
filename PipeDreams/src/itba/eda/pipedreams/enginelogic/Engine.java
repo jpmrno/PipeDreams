@@ -34,7 +34,9 @@ public class Engine {
 		
 		if(!board.withinLimits(current)) {
 			return true;
-		} else if(last.isBlocked()) {
+		} 
+		
+		if(board.isBlocked(current)) {
 			if(!last.hasPipe())
 				return false;
 			else if(last.getPipe() == pipeBox.getItem(6)); //TODO Comparacion del pipe cruz

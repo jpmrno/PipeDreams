@@ -36,16 +36,16 @@ public class Tile {
 	
 	public Point getNext(Dir to) {
 		switch (to){
-		case NORTH:
-			return new Point(pos.getX()+1, pos.getY());		
-		case SOUTH:
-			return new Point(pos.getX()-1, pos.getY());
-		case WEST:
-			return new Point(pos.getX(), pos.getY()+1);
-		case EAST:
-			return new Point(pos.getX(), pos.getY()-1);
-		default:
-			return null;
+			case NORTH:
+				return new Point(pos.getX()+1, pos.getY());		
+			case SOUTH:
+				return new Point(pos.getX()-1, pos.getY());
+			case WEST:
+				return new Point(pos.getX(), pos.getY()+1);
+			case EAST:
+				return new Point(pos.getX(), pos.getY()-1);
+			default:
+				return null;
 		}
 	}
 
