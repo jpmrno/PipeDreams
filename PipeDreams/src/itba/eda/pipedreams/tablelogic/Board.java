@@ -71,6 +71,9 @@ public class Board {
 	}
 
 	public Tile getTile(int x, int y){
+		if(x >= board.length || x < 0 || y >= board[0].length || y < 0) {
+			return null;
+		}
 		return board[x][y];
 	}
 	

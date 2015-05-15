@@ -20,13 +20,13 @@ public class Tile {
 		switch (dir){
 		
 			case NORTH:
-				return Board.getInstance().getTile(x, y - 1);
-			case SOUTH:
-				return Board.getInstance().getTile(x, y + 1);
-			case EAST:
-				return Board.getInstance().getTile(x + 1, y);
-			case WEST:
 				return Board.getInstance().getTile(x - 1, y);
+			case SOUTH:
+				return Board.getInstance().getTile(x + 1, y);
+			case EAST:
+				return Board.getInstance().getTile(x, y + 1);
+			case WEST:
+				return Board.getInstance().getTile(x, y - 1);
 			default:
 				return null;
 		}

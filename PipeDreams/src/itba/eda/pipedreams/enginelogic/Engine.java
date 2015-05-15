@@ -36,14 +36,13 @@ public class Engine {
 		Tile origin = board.getTile(board.getXFlow(), board.getYFlow());
 		
 		timer.startClock();
-		
+
+		System.out.println(board.getDirFlow());
 		switch (used_algorithm){
-			
 			case RecursiveBacktracking:
 				RecursiveBacktracking(origin.getNext(board.getDirFlow()), board.getDirFlow(), currPath, longestPath);
 				break;
 		}
-		
 		running_time = timer.stopClock();
 		System.out.println("DEBUG> Running time: " + running_time);
 		
@@ -86,16 +85,16 @@ public class Engine {
 		
 		//No more pipes left
 		if(pipeBox.isEmpty()){
-			System.out.println("Pipebox empty");
+			System.out.println("PipeBox empty");
 			return;
 		}
 		
 		for (int i = 0; i < pipeBox.getPipeSize(); i++){
-			System.out.println("For");
+			System.out.println("Consultando pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
 			new_pipe = pipeBox.getItem(i);
-			new_destiny = new_pipe.flow(destiny_dir);
+			new_destiny = new_pipe.flow(destiny_dir.getOpposite());
 			
-			if (pipeBox.hasItem(i) && new_pipe.canFlow(destiny_dir)){
+			if (pipeBox.hasItem(i) && new_pipe.canFlow(destiny_dir.getOpposite())){
 				
 				pipeBox.remove(i);
 				destiny_tile.setPipe(new_pipe);

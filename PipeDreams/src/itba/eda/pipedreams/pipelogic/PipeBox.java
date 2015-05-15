@@ -41,6 +41,10 @@ public class PipeBox {
 	public int getCurrSize() {
 		return currSize;
 	}
+
+	public int getPipeTypeSize(int i) {
+		return items[i];
+	}
 	
 	public boolean isEmpty() {
 		return currSize == 0;
