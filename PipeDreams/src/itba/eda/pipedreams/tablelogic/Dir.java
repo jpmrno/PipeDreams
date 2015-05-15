@@ -21,18 +21,24 @@ public enum Dir {
 		}
 	}
 	
-	public static Dir invert(Dir dir) {
-		switch (dir){
-		case NORTH:
-			return SOUTH;		
-		case SOUTH:
-			return NORTH;
-		case WEST:
-			return EAST;
-		case EAST:
-			return WEST;
-		default:
-			return null;
+	public Dir getOpposite() {
+		Dir ret = null;
+		
+		switch (this){
+			case NORTH:
+				ret = SOUTH;
+				break;
+			case SOUTH:
+				ret = NORTH;
+				break;
+			case WEST:
+				ret = EAST;
+				break;
+			case EAST:
+				ret = WEST;
+				break;
 		}
+		
+		return ret;
 	}
 }
