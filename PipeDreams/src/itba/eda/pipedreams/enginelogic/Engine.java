@@ -72,7 +72,7 @@ public class Engine {
 		
 		//There's a pipe
 		if (destiny_tile.hasPipe()){
-			if (destiny_tile.getPipe().equals(PipeFactory.getPipe(PipeBox.CROSS_PIPE_ID))){
+			if (destiny_tile.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
 				current.push(destiny_tile.getPipe());
 				RecursiveBacktracking(destiny_tile.getNext(destiny_dir), destiny_dir, current, longest);
 				current.pop();
@@ -106,8 +106,7 @@ public class Engine {
 		
 	}
 	
-	public static void Copy(Queue<Pipe> from, Queue<Pipe> to){
-		
+	public static void Copy(Queue<Pipe> from, Queue<Pipe> to) {
 		for (Pipe aux: from){
 			to.add(aux);
 		}
