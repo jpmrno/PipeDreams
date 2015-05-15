@@ -50,7 +50,7 @@ public class Engine {
 	}
 	
 	public void RecursiveBacktracking(Tile destiny_tile, Dir destiny_dir, Deque<Pipe> current, Deque<Pipe> longest){
-		
+		board.print();
 		Pipe new_pipe;
 		Dir new_destiny;
 		

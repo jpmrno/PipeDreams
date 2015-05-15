@@ -63,13 +63,13 @@ public class PipeFactory {
 		public int getId() {
 			return 4;
 		}
-	},new Pipe() {	//W <-> N
+	},new Pipe() {	//W <-> E
 		public boolean canFlow(Dir from) {
-			return from == Dir.WEST || from == Dir.NORTH;
+			return from == Dir.WEST || from == Dir.EAST;
 		}
 
 		public Dir flow(Dir from) {
-			return from == Dir.WEST ? Dir.NORTH : Dir.WEST;
+			return from == Dir.WEST ? Dir.EAST : Dir.WEST;
 		}
 
 		public int getId() {

@@ -96,4 +96,25 @@ public class Board {
 		return x >= 0 && x < board.length && y >= 0 && y < board[0].length;
 	}
 
+	public void print() {
+		System.out.println("-----------------------------------");
+		for(int i=0; i < board.length; i++) {
+			for(int j=0; j < board[0].length; j++) {
+				Tile curr = board[i][j];
+				if(curr.hasPipe()) {
+					System.out.print("\t" + curr.getPipe().getId());
+				} else if(curr.isBlocked()) {
+					System.out.print("\t#");
+				} else {
+					System.out.print("\t ");
+				}
+			}
+			System.out.println();
+		}
+
+		System.out.println("-----------------------------------");
+
+
+	}
+
 }
