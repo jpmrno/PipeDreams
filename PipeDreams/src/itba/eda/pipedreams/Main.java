@@ -19,7 +19,7 @@ public class Main { // TODO: Ver las salidas
 
 	private static int rows;
 	private static int columns;
-	private static String[] board;
+	private static String[] boardFile;
 	private static int[] pipes;
 
 	public static void main(String[] args) {
@@ -74,10 +74,10 @@ public class Main { // TODO: Ver las salidas
 		}
 		///////////////////////////////
 		
-		Board.getInstance().loadBoard(board);
+		Board board = new Board(boardFile);
 		PipeBox pipebox = new PipeBox();
 		pipebox.setAll(pipes);
-		Engine eng = new Engine(Algorithm.RecursiveBacktracking, pipebox);
+		Engine eng = new Engine(Algorithm.RecursiveBacktracking, board, pipebox);
 		eng.start();
 	}
 
@@ -90,7 +90,7 @@ public class Main { // TODO: Ver las salidas
 				System.exit(1);
 			}
 
-			board = new String[rows];
+			boardFile = new String[rows];
 			for(int i = 0; i < rows; i++) {
 				line = br.readLine();
 				if(line == null || line.length() > columns) {
@@ -98,7 +98,7 @@ public class Main { // TODO: Ver las salidas
 					System.exit(1);
 				}
 
-				board[i] = line;
+				boardFile[i] = line;
 			}
 
 			pipes = new int[ELEMS];
@@ -148,7 +148,7 @@ public class Main { // TODO: Ver las salidas
 		System.out.println();
 		System.out.println("Filas: " + rows + " , Columns: " + columns + ".");
 		System.out.println();
-		for(String row : board) {
+		for(String row : boardFile) {
 			System.out.println(row);
 		}
 		System.out.println();

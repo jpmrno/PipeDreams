@@ -6,111 +6,113 @@ import java.util.Queue;
 
 import itba.eda.pipedreams.pipelogic.Pipe;
 import itba.eda.pipedreams.pipelogic.PipeBox;
-import itba.eda.pipedreams.pipelogic.PipeFactory;
 import itba.eda.pipedreams.tablelogic.Board;
 import itba.eda.pipedreams.tablelogic.Dir;
+import itba.eda.pipedreams.tablelogic.Point;
 import itba.eda.pipedreams.tablelogic.Tile;
 
 public class Engine {
 	
-	private Algorithm used_algorithm;
+	private Algorithm usedAlgorithm;
 	
 	private PipeBox pipeBox;
 	private Board board;
 	Timer timer = new Timer();
 	
-	public Engine(Algorithm alg, PipeBox pbox) {
-		pipeBox = pbox;
-		board = Board.getInstance();
-		used_algorithm = alg;
+	public Engine(Algorithm alg, Board board, PipeBox pipeBox) {
+		this.pipeBox = pipeBox;
+		this.board = board;
+		usedAlgorithm = alg;
 	}
 	
 	public void start() {
-		
-		long running_time;
-		
 		//TODO: Notify frontend observers
 		Deque<Pipe> longestPath = new LinkedList<Pipe>();
 		Deque<Pipe> currPath = new LinkedList<Pipe>();
-		
-		Tile origin = board.getTile(board.getXFlow(), board.getYFlow());
+		Tile origin = board.getOriginTile();
 		
 		timer.startClock();
 
-		System.out.println(board.getDirFlow());
-		switch (used_algorithm){
+		switch (usedAlgorithm){
 			case RecursiveBacktracking:
-				RecursiveBacktracking(origin.getNext(board.getDirFlow()), board.getDirFlow(), currPath, longestPath);
+				RecursiveBacktracking(board.getTile(origin.getNext(board.getDirFlow())), board.getDirFlow(), currPath, longestPath);
+				break;
+			default:
 				break;
 		}
-		running_time = timer.stopClock();
-		System.out.println("DEBUG> Running time: " + running_time);
-		
+
+		timer.stopClock();
+
+		timer.printRunningTime();
 	}
-	
-	public void RecursiveBacktracking(Tile destiny_tile, Dir destiny_dir, Deque<Pipe> current, Deque<Pipe> longest){
+
+	/**
+	 *
+	 * @param curr Tile actual
+	 * @param from desde que punto cardinal vengo
+	 * @param currentPath
+	 * @param longestPath
+	 */
+	public void RecursiveBacktracking(Tile curr, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath){
+		//TODO: REMOVE DEBUG PRINT
 		board.print();
-		Pipe new_pipe;
-		Dir new_destiny;
-		
-		//Solution found
-		if (destiny_tile == null){
+
+		if (curr == null){
 			System.out.println("Solution found");
-			if(current.size() > longest.size()){
-				while(!longest.isEmpty())
-					longest.pop();
-				Copy(current, longest);
+			if(currentPath.size() > longestPath.size()){
+				copyFromScratch(currentPath, longestPath);
 			}
 			return;
 		}
-		
-		
-		//Blocked
-		if (destiny_tile.isBlocked()){
+
+		if (curr.isBlocked()){
 			System.out.println("Blocked");
 			return;
 		}
-		
-		//There's a pipe
-		if (destiny_tile.hasPipe()){
-			System.out.println("Has pipe");
-			if (destiny_tile.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
-				current.push(destiny_tile.getPipe());
-				RecursiveBacktracking(destiny_tile.getNext(destiny_dir), destiny_dir, current, longest);
-				current.pop();
+
+		if (curr.hasPipe()){
+			System.out.println("Current Tile already has a pipe");
+			if (curr.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
+				Dir to = pipeBox.getItem(PipeBox.CROSS_PIPE_ID).flow(from);
+				currentPath.push(curr.getPipe());
+				RecursiveBacktracking(board.getTile(curr.getNext(to)), to.getOpposite(), currentPath, longestPath);
+				currentPath.pop();
 			}
 			return;
 		}
-		
-		
-		//No more pipes left
+
 		if(pipeBox.isEmpty()){
-			System.out.println("PipeBox empty");
+			System.out.println("PipeBox is empty");
 			return;
 		}
 		
 		for (int i = 0; i < pipeBox.getPipeSize(); i++){
-			System.out.println("Consultando pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
-			new_pipe = pipeBox.getItem(i);
-			new_destiny = new_pipe.flow(destiny_dir.getOpposite());
+			System.out.println("Consultando por pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
+
+			Pipe newPipe = pipeBox.getItem(i);
+			Dir to = newPipe.flow(from);
 			
-			if (pipeBox.hasItem(i) && new_pipe.canFlow(destiny_dir.getOpposite())){
+			if (pipeBox.hasItem(i) && newPipe.canFlow(from)){
 				
 				pipeBox.remove(i);
-				destiny_tile.setPipe(new_pipe);
-				current.push(new_pipe);
+				curr.setPipe(newPipe);
+				currentPath.push(newPipe);
+
+				Point next = curr.getNext(to); //Consigo la proxima posicion a la que tengo que ir
+				RecursiveBacktracking(board.getTile(next), to.getOpposite(), currentPath, longestPath);
 				
-				RecursiveBacktracking(destiny_tile.getNext(new_destiny), new_destiny, current, longest);
-				
-				current.pop();
-				destiny_tile.removePipe();
+				currentPath.pop();
+				curr.removePipe();
 				pipeBox.add(i);
 			}
 		}
 		
 	}
 	
-	public static void Copy(Queue<Pipe> from, Queue<Pipe> to) {
+	public static void copyFromScratch(Queue<Pipe> from, Queue<Pipe> to) {
+		//TODO: Se puede optimizar recorriendo los 2 y removiendo hasta que encuentre uno que sean iguales(en posicion o en tipo de pipe?)
+		while(!to.isEmpty())
+			to.remove();
 		for (Pipe aux: from){
 			to.add(aux);
 		}

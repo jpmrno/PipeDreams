@@ -1,29 +1,13 @@
 package itba.eda.pipedreams.tablelogic;
 
 public class Board {
-	private static Board instance = null;
 	
 	private Tile[][] board;
 	private int x_flow;
 	private int y_flow;
 	private Dir flow;
-	
-	//private static final String[] example = {"##  ##", "  # #", "#  N  ", "#     ", "###   "};
 
-
-	public static Board getInstance(){
-
-		if (instance == null){
-			instance = new Board();
-		}
-		return instance;
-	}
-	
-	private Board() {
-		
-	}
-	
-	public void loadBoard(String[] tiles){
+	public Board(String[] tiles){
 		board = new Tile[tiles.length][tiles[0].length()];
 
 		boolean sourceFound = false;
@@ -70,11 +54,15 @@ public class Board {
 		}
 	}
 
-	public Tile getTile(int x, int y){
+	public Tile getTile(Point point){
+		int x = point.getX();
+		int y = point.getY();
+
 		if(x >= board.length || x < 0 || y >= board[0].length || y < 0) {
 			return null;
+		} else {
+			return board[x][y];
 		}
-		return board[x][y];
 	}
 	
 	public void setFlow(int x, int y, Dir dir){
@@ -94,13 +82,9 @@ public class Board {
 	public Dir getDirFlow(){
 		return flow;
 	}
-	
-	public boolean TileExists(int x, int y) {
-		return x >= 0 && x < board.length && y >= 0 && y < board[0].length;
-	}
 
 	public void print() {
-		System.out.println("-----------------------------------");
+		System.out.println("-------------------------");
 		for(int i=0; i < board.length; i++) {
 			for(int j=0; j < board[0].length; j++) {
 				Tile curr = board[i][j];
@@ -114,10 +98,10 @@ public class Board {
 			}
 			System.out.println();
 		}
-
-		System.out.println("-----------------------------------");
-
-
+		System.out.println("-------------------------");
 	}
 
+	public Tile getOriginTile() {
+		return board[x_flow][y_flow];
+	}
 }

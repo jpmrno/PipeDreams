@@ -16,24 +16,19 @@ public class Tile {
 		this.y = y;
 	}
 	
-	public Tile getNext(Dir dir){
+	public Point getNext(Dir dir){
 		switch (dir){
-		
 			case NORTH:
-				return Board.getInstance().getTile(x - 1, y);
+				return new Point(x - 1, y);
 			case SOUTH:
-				return Board.getInstance().getTile(x + 1, y);
+				return new Point(x + 1, y);
 			case EAST:
-				return Board.getInstance().getTile(x, y + 1);
+				return new Point(x, y + 1);
 			case WEST:
-				return Board.getInstance().getTile(x, y - 1);
+				return new Point(x, y - 1);
 			default:
 				return null;
 		}
-	}
-	
-	public boolean isLegal(){
-		return (pipe == null && blocked == false);
 	}
 	
 	public boolean isBlocked(){
@@ -50,14 +45,6 @@ public class Tile {
 	
 	public void removePipe(){
 		this.pipe = null;
-	}
-	
-	public int getPosX() {
-		return x;
-	}
-	
-	public int getPosY() {
-		return y;
 	}
 	
 	public Pipe getPipe() {
