@@ -2,6 +2,7 @@ package itba.eda.pipedreams.enginelogic;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Queue;
 
 import itba.eda.pipedreams.pipelogic.Pipe;
 import itba.eda.pipedreams.pipelogic.PipeBox;
@@ -54,8 +55,11 @@ public class Engine {
 		
 		//Solution
 		if (destiny_tile == null){
-			if(current.size() > longest.size())
-				System.out.println("TODO: Copy new solution");
+			if(current.size() > longest.size()){
+				while(!longest.isEmpty())
+					longest.pop();
+				Copy(current, longest);
+			}
 			return;
 		}
 		
@@ -63,7 +67,7 @@ public class Engine {
 		if (destiny_tile.isBlocked())
 			return;
 		
-		//Optimization: No more pipes
+		
 		
 		//There's a pipe
 		if (destiny_tile.hasPipe()){
@@ -75,7 +79,10 @@ public class Engine {
 			return;
 		}
 		
-		for (int i = 0; i < pipeBox.getSize(); i++){
+		if(pipeBox.isEmpty())
+			return;
+		
+		for (int i = 0; i < pipeBox.getPipeSize(); i++){
 			
 			new_pipe = pipeBox.getItem(i);
 			new_destiny = new_pipe.flow(destiny_dir);
@@ -94,7 +101,13 @@ public class Engine {
 			}
 		}
 		
+	}
+	
+	public static void Copy(Queue<Pipe> from, Queue<Pipe> to){
 		
+		for (Pipe aux: from){
+			to.add(aux);
+		}
 		
 	}
 	
