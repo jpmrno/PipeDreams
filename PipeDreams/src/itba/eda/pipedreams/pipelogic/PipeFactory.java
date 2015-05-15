@@ -11,6 +11,10 @@ public class PipeFactory {
 		public Dir flow(Dir from) {
 			return from == Dir.WEST ? Dir.NORTH : Dir.WEST;
 		}
+
+		public int getId() {
+			return 0;
+		}
 	},new Pipe() {	//N <-> E
 		public boolean canFlow(Dir from) {
 			return from == Dir.NORTH || from == Dir.EAST;
@@ -18,6 +22,10 @@ public class PipeFactory {
 
 		public Dir flow(Dir from) {
 			return from == Dir.NORTH ? Dir.EAST : Dir.NORTH;
+		}
+
+		public int getId() {
+			return 1;
 		}
 	},new Pipe() {	//S <-> E
 		public boolean canFlow(Dir from) {
@@ -27,6 +35,10 @@ public class PipeFactory {
 		public Dir flow(Dir from) {
 			return from == Dir.SOUTH ? Dir.EAST : Dir.SOUTH;
 		}
+
+		public int getId() {
+			return 2;
+		}
 	},new Pipe() {	//S <-> W
 		public boolean canFlow(Dir from) {
 			return from == Dir.SOUTH || from == Dir.WEST;
@@ -34,6 +46,10 @@ public class PipeFactory {
 
 		public Dir flow(Dir from) {
 			return from == Dir.SOUTH ? Dir.WEST : Dir.SOUTH;
+		}
+
+		public int getId() {
+			return 3;
 		}
 	},new Pipe() {	//S <-> N
 		public boolean canFlow(Dir from) {
@@ -43,6 +59,10 @@ public class PipeFactory {
 		public Dir flow(Dir from) {
 			return from == Dir.SOUTH ? Dir.NORTH : Dir.SOUTH;
 		}
+
+		public int getId() {
+			return 4;
+		}
 	},new Pipe() {	//W <-> N
 		public boolean canFlow(Dir from) {
 			return from == Dir.WEST || from == Dir.NORTH;
@@ -50,6 +70,10 @@ public class PipeFactory {
 
 		public Dir flow(Dir from) {
 			return from == Dir.WEST ? Dir.NORTH : Dir.WEST;
+		}
+
+		public int getId() {
+			return 5;
 		}
 	},new Pipe() {	//S <-> N, W <-> E
 		public boolean canFlow(Dir from) {
@@ -64,6 +88,10 @@ public class PipeFactory {
 			else if(from == Dir.WEST)
 				return Dir.EAST;
 			return Dir.WEST;
+		}
+
+		public int getId() {
+			return 6;
 		}
 	} };
 	
