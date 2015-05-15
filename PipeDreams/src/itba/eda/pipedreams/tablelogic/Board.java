@@ -1,11 +1,7 @@
 package itba.eda.pipedreams.tablelogic;
 
 public class Board {
-<<<<<<< HEAD
-	//private static Board instance = null;
-=======
 	private static Board instance = null;
->>>>>>> alg
 	
 	private Tile[][] board;
 	private int x_flow;
@@ -14,16 +10,8 @@ public class Board {
 	
 	//private static final String[] example = {"##  ##", "  # #", "#  N  ", "#     ", "###   "};
 	
-<<<<<<< HEAD
-	/*public static Board getInstance(){
-		
-	}*/
-	
-	private Board(int dimX, int dimY) {
-		board = new Tile[dimX][dimY];
-=======
+
 	public static Board getInstance(){
->>>>>>> alg
 		
 		if (instance == null){
 			instance = new Board();

@@ -13,8 +13,6 @@ import itba.eda.pipedreams.tablelogic.Tile;
 
 public class Engine {
 	
-	public static int X_PIPE_ID = 6;
-	
 	private Algorithm used_algorithm;
 	
 	private PipeBox pipeBox;
@@ -34,11 +32,14 @@ public class Engine {
 	
 	public void start() {
 		
+		double milisecs;
+		
 		//TODO: Notify frontend observers
 		Deque<Pipe> longestPath = new LinkedList<Pipe>();
 		Deque<Pipe> currPath = new LinkedList<Pipe>();
 		
 		Tile origin = board.getTile(board.getXFlow(), board.getYFlow());
+		
 		
 		switch (used_algorithm){
 			
@@ -53,7 +54,7 @@ public class Engine {
 		Pipe new_pipe;
 		Dir new_destiny;
 		
-		//Solution
+		//Solution found
 		if (destiny_tile == null){
 			if(current.size() > longest.size()){
 				while(!longest.isEmpty())
@@ -63,15 +64,15 @@ public class Engine {
 			return;
 		}
 		
+		
 		//Blocked
 		if (destiny_tile.isBlocked())
 			return;
 		
 		
-		
 		//There's a pipe
 		if (destiny_tile.hasPipe()){
-			if (destiny_tile.getPipe().equals(PipeFactory.getPipe(X_PIPE_ID))){
+			if (destiny_tile.getPipe().equals(PipeFactory.getPipe(PipeBox.CROSS_PIPE_ID))){
 				current.push(destiny_tile.getPipe());
 				RecursiveBacktracking(destiny_tile.getNext(destiny_dir), destiny_dir, current, longest);
 				current.pop();
@@ -79,6 +80,8 @@ public class Engine {
 			return;
 		}
 		
+		
+		//No more pipes left
 		if(pipeBox.isEmpty())
 			return;
 		

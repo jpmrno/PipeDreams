@@ -1,6 +1,7 @@
 package itba.eda.pipedreams.pipelogic;
 
 public class PipeBox {
+	public static final int CROSS_PIPE_ID = 6;
 	private final static int ITEMS_SIZE = PipeFactory.getPipeTypesSize();
 	private int[] items;
 	private int currSize;
