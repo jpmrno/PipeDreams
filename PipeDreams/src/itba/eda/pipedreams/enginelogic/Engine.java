@@ -17,6 +17,7 @@ public class Engine {
 	
 	private PipeBox pipeBox;
 	private Board board;
+	Timer timer = new Timer();
 	
 	public Engine(Algorithm alg, int sizeX, int sizeY, int startX, int startY, String dir) {
 		
@@ -32,7 +33,7 @@ public class Engine {
 	
 	public void start() {
 		
-		double milisecs;
+		long running_time;
 		
 		//TODO: Notify frontend observers
 		Deque<Pipe> longestPath = new LinkedList<Pipe>();
@@ -40,6 +41,7 @@ public class Engine {
 		
 		Tile origin = board.getTile(board.getXFlow(), board.getYFlow());
 		
+		timer.startClock();
 		
 		switch (used_algorithm){
 			
@@ -47,6 +49,9 @@ public class Engine {
 				RecursiveBacktracking(origin.getNext(board.getDirFlow()), board.getDirFlow(), currPath, longestPath);
 				break;
 		}
+		
+		running_time = timer.stopClock();
+		
 	}
 	
 	public void RecursiveBacktracking(Tile destiny_tile, Dir destiny_dir, Deque<Pipe> current, Deque<Pipe> longest){
