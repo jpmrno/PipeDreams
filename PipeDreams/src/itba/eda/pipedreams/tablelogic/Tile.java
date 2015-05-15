@@ -9,9 +9,9 @@ public class Tile {
 	int x;
 	int y;
 	
-	public Tile(int x, int y){
+	public Tile(int x, int y, boolean blocked){
 		this.pipe = null;
-		this.blocked = false;
+		this.blocked = blocked;
 		this.x = x;
 		this.y = y;
 	}
