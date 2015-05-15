@@ -45,4 +45,14 @@ public class PipeBox {
 	public boolean isEmpty() {
 		return currSize == 0;
 	}
+	
+	//TODO: Improve
+	public void setAll(int[] values){
+		
+		for (int i = 0; i < values.length; i++){
+			items[i] = values[i];
+			currSize += values[i];
+		}
+	}
+	
 }

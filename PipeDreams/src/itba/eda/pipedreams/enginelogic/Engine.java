@@ -19,15 +19,9 @@ public class Engine {
 	private Board board;
 	Timer timer = new Timer();
 	
-	public Engine(Algorithm alg, int sizeX, int sizeY, int startX, int startY, String dir) {
-		
-		pipeBox = new PipeBox();
-		
+	public Engine(Algorithm alg, PipeBox pbox) {
+		pipeBox = pbox;
 		board = Board.getInstance();
-		board.loadBoard(sizeX, sizeY);
-		
-		board.setFlow(startX, startY, Dir.getBySymbol(dir));
-	
 		used_algorithm = alg;
 	}
 	
@@ -51,6 +45,7 @@ public class Engine {
 		}
 		
 		running_time = timer.stopClock();
+		System.out.println("DEBUG> Running time: " + running_time);
 		
 	}
 	
@@ -61,6 +56,7 @@ public class Engine {
 		
 		//Solution found
 		if (destiny_tile == null){
+			System.out.println("Solution found");
 			if(current.size() > longest.size()){
 				while(!longest.isEmpty())
 					longest.pop();
@@ -71,12 +67,14 @@ public class Engine {
 		
 		
 		//Blocked
-		if (destiny_tile.isBlocked())
+		if (destiny_tile.isBlocked()){
+			System.out.println("Blocked");
 			return;
-		
+		}
 		
 		//There's a pipe
 		if (destiny_tile.hasPipe()){
+			System.out.println("Has pipe");
 			if (destiny_tile.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
 				current.push(destiny_tile.getPipe());
 				RecursiveBacktracking(destiny_tile.getNext(destiny_dir), destiny_dir, current, longest);
@@ -87,11 +85,13 @@ public class Engine {
 		
 		
 		//No more pipes left
-		if(pipeBox.isEmpty())
+		if(pipeBox.isEmpty()){
+			System.out.println("Pipebox empty");
 			return;
+		}
 		
 		for (int i = 0; i < pipeBox.getPipeSize(); i++){
-			
+			System.out.println("For");
 			new_pipe = pipeBox.getItem(i);
 			new_destiny = new_pipe.flow(destiny_dir);
 			

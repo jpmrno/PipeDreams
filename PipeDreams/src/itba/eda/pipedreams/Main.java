@@ -1,9 +1,16 @@
 package itba.eda.pipedreams;
 
+import itba.eda.pipedreams.enginelogic.Algorithm;
+import itba.eda.pipedreams.enginelogic.Engine;
+import itba.eda.pipedreams.pipelogic.PipeBox;
+import itba.eda.pipedreams.tablelogic.Board;
+import itba.eda.pipedreams.tablelogic.Tile;
+
 import java.io.*;
 import java.util.regex.Pattern;
 
 public class Main { // TODO: Ver las salidas
+	
 	private static final int ELEMS = 7;
 
 	private static Method method;
@@ -16,6 +23,7 @@ public class Main { // TODO: Ver las salidas
 	private static int[] pipes;
 
 	public static void main(String[] args) {
+		
 		if(args.length < 2 || args.length > 5) {
 			System.err.println("Invalid number of arguments [2-4].");
 			System.exit(1);
@@ -64,8 +72,13 @@ public class Main { // TODO: Ver las salidas
 			System.err.println("Error while trying to read: " + args[0] + ".");
 			System.exit(1);
 		}
-
-		print();
+		///////////////////////////////
+		
+		Board.getInstance().loadBoard(board);
+		PipeBox pipebox = new PipeBox();
+		pipebox.setAll(pipes);
+		Engine eng = new Engine(Algorithm.RecursiveBacktracking, pipebox);
+		eng.start();
 	}
 
 	private static void readFile(FileReader file) throws IOException { // TODO: sacar los System.exit()s
