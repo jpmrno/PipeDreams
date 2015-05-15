@@ -9,10 +9,10 @@ public class Board {
 	private Dir flow;
 	
 	//private static final String[] example = {"##  ##", "  # #", "#  N  ", "#     ", "###   "};
-	
+
 
 	public static Board getInstance(){
-		
+
 		if (instance == null){
 			instance = new Board();
 		}
@@ -23,18 +23,53 @@ public class Board {
 		
 	}
 	
-	public void loadBoard(int x_dim, int y_dim){
-		
-		board = new Tile[x_dim][y_dim];
-		
-		for (int i = 0; i < x_dim; i++) {
-			for (int j = 0; j < y_dim; j++) {
-				board[i][j] = new Tile(i, j);
-				//TODO: set Tile
+	public void loadBoard(String[] tiles){
+		board = new Tile[tiles.length][tiles[0].length()];
+
+		boolean sourceFound = false;
+
+		for(int i=0; i < tiles.length; i++) {
+			for(int j=0; j < tiles[0].length(); j++) {
+				if (parseTile(tiles[i].charAt(j), i, j)) {
+					if (sourceFound == false) {
+						sourceFound = true;
+					} else if (sourceFound == true) {
+						throw new IllegalArgumentException("Illegal board");
+					}
+				}
 			}
 		}
 	}
-	
+
+		/**
+		 * @return returns true if a source is found
+ 		 */
+	private boolean parseTile(Character c, int i, int j) {
+		switch(Character.toUpperCase(c)) {
+
+			case '#':
+				board[i][j] = new Tile(i, j, true);
+				return false;
+
+			case ' ':
+				board[i][j] = new Tile(i, j, false);
+				return false;
+
+			case 'N':
+			case 'S':
+			case 'W':
+			case 'E':
+				board[i][j] = new Tile(i, j, true);
+				x_flow = i;
+				y_flow = j;
+				flow = Dir.getBySymbol(c.toString());
+				return true;
+
+			default:
+				throw new IllegalArgumentException("Illegal Board");
+		}
+	}
+
 	public Tile getTile(int x, int y){
 		return board[x][y];
 	}
