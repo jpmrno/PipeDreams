@@ -1,20 +1,42 @@
 package itba.eda.pipedreams.enginelogic;
 
 public class Timer {
-	
-	private long running_time;
+	private long runningTime;
+	private boolean isRunning;
 	
 	
 	public Timer(){
-		running_time = 0;
+		runningTime = 0;
+		isRunning = false;
 	}
 	
-	public void startClock(){
-		running_time = System.currentTimeMillis();
+	public void startClock() {
+		if(!isRunning) {
+			runningTime = System.currentTimeMillis();
+			isRunning = true;
+		} else {
+			System.out.println("Timer has already started");
+		}
 	}
 	
-	public long stopClock(){
-		long final_time = System.currentTimeMillis();
-		return final_time - running_time;
+	public void stopClock(){
+		runningTime = System.currentTimeMillis() - runningTime;
+		isRunning = false;
+	}
+
+	public long getRunningTime() {
+		if(isRunning) {
+			return System.currentTimeMillis() - runningTime;
+		} else {
+			return runningTime;
+		}
+	}
+
+	public void printRunningTime() {
+		if(isRunning) {
+			System.out.println("Running time is: " + runningTime + "ms");
+		} else {
+			System.out.println("Running time was: " + runningTime + "ms");
+		}
 	}
 }
