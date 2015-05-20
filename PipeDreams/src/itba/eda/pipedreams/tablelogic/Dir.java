@@ -9,12 +9,27 @@ public enum Dir {
 	public static Dir getBySymbol(String str){
 		switch (str){
 			case "N":
-				return NORTH;		
+				return NORTH;
 			case "S":
 				return SOUTH;
 			case "W":
 				return WEST;
 			case "E":
+				return EAST;
+			default:
+				return null;
+		}
+	}
+
+	public static Dir getBySymbol(char c){
+		switch (Character.toUpperCase(c)){
+			case 'N':
+				return NORTH;
+			case 'S':
+				return SOUTH;
+			case 'W':
+				return WEST;
+			case 'E':
 				return EAST;
 			default:
 				return null;

@@ -42,8 +42,10 @@ public class Engine {
 		}
 
 		timer.stopClock();
-
 		timer.printRunningTime();
+
+		System.out.println("Max: " + longestPath.size());
+		board.print();
 	}
 
 	/**
@@ -55,10 +57,10 @@ public class Engine {
 	 */
 	public void RecursiveBacktracking(Tile curr, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath){
 		//TODO: REMOVE DEBUG PRINT
-		board.print();
+//		board.print();
 
 		if (curr == null){
-			System.out.println("Solution found");
+//			System.out.println("Solution found");
 			if(currentPath.size() > longestPath.size()){
 				copyFromScratch(currentPath, longestPath);
 			}
@@ -66,12 +68,12 @@ public class Engine {
 		}
 
 		if (curr.isBlocked()){
-			System.out.println("Blocked");
+//			System.out.println("Blocked");
 			return;
 		}
 
 		if (curr.hasPipe()){
-			System.out.println("Current Tile already has a pipe");
+//			System.out.println("Current Tile already has a pipe");
 			if (curr.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
 				Dir to = pipeBox.getItem(PipeBox.CROSS_PIPE_ID).flow(from);
 				currentPath.push(curr.getPipe());
@@ -82,12 +84,12 @@ public class Engine {
 		}
 
 		if(pipeBox.isEmpty()){
-			System.out.println("PipeBox is empty");
+//			System.out.println("PipeBox is empty");
 			return;
 		}
 		
 		for (int i = 0; i < pipeBox.getPipeSize(); i++){
-			System.out.println("Consultando por pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
+//			System.out.println("Consultando por pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
 
 			Pipe newPipe = pipeBox.getItem(i);
 			Dir to = newPipe.flow(from);

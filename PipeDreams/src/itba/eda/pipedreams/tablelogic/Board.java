@@ -15,9 +15,9 @@ public class Board {
 		for(int i=0; i < tiles.length; i++) {
 			for(int j=0; j < tiles[0].length(); j++) {
 				if (parseTile(tiles[i].charAt(j), i, j)) {
-					if (sourceFound == false) {
+					if (!sourceFound) {
 						sourceFound = true;
-					} else if (sourceFound == true) {
+					} else if (sourceFound) {
 						throw new IllegalArgumentException("Illegal board");
 					}
 				}

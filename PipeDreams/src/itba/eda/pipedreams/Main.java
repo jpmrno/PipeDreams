@@ -1,17 +1,13 @@
 package itba.eda.pipedreams;
 
-import itba.eda.pipedreams.enginelogic.Algorithm;
-import itba.eda.pipedreams.enginelogic.Engine;
-import itba.eda.pipedreams.pipelogic.PipeBox;
-import itba.eda.pipedreams.tablelogic.Board;
-import itba.eda.pipedreams.tablelogic.Tile;
+import itba.eda.pipedreams.tablelogic.GameBoard;
 
 import java.io.*;
 import java.util.regex.Pattern;
 
-public class Main { // TODO: Ver las salidas
+public class Main { // TODO: Ver las salidas // TODO: sacar o modificar los System.exit()s
 	
-	private static final int ELEMS = 7;
+	private static final int ELEMS = 7; // TODO: Leerlo del back
 
 	private static Method method;
 	private static int approxTime;
@@ -25,8 +21,7 @@ public class Main { // TODO: Ver las salidas
 	public static void main(String[] args) {
 		
 		if(args.length < 2 || args.length > 5) {
-			System.err.println("Invalid number of arguments [2-4].");
-			System.exit(1);
+			error("Invalid number of arguments [2-4].");
 		}
 
 		int i = 0;
@@ -34,68 +29,75 @@ public class Main { // TODO: Ver las salidas
 
 		String methodString = args[i++];
 
+		if(i < args.length) {
+			getMethod(methodString, args[i]);
+			if(approxTime != 0) {
+				i++;
+			}
+			if(i < args.length) {
+				hasProgress(args[i]);
+			}
+		}
+
+		openFile(fileName);
+
+		GameBoard board = new GameBoard(rows, columns, boardFile);
+		System.out.println(board);
+	}
+
+	private static void getMethod(String methodString, String arg) {
 		if(methodString.equalsIgnoreCase("approx")) {
 			method = Method.APROX;
 			try {
-				approxTime = Integer.parseInt(args[i]);
-				i++;
-			} catch(ArrayIndexOutOfBoundsException e) { // TODO: MUY FEO? jajaja
-				System.err.println("Missing aprox method argument.");
-				System.exit(1);
+				approxTime = Integer.parseInt(arg);
+			} catch(ArrayIndexOutOfBoundsException e) {
+				error("Missing aprox method argument.");
 			} catch(NumberFormatException e) {
-				System.err.println("Argument: " + args[i] + " must be an integer.");
-				System.exit(1);
+				error("Argument: " + arg + " must be an integer.");
+			}
+
+			if(approxTime <= 0) {
+				error("Invalid aprox time.");
 			}
 		} else if(methodString.equalsIgnoreCase("exact")) {
 			method = Method.EXACT;
 		} else {
-			System.err.println("Invalid method: " + methodString + ".");
-			System.exit(1);
+			error("Invalid method: " + methodString + ".");
 		}
+	}
 
-		if(i < args.length) {
-			if(args[i].equalsIgnoreCase("progress")) {
-				progress = true;
-			} else {
-				System.err.println("Illegal argument: " + args[i] + ".");
-				System.exit(1);
-			}
+	private static void hasProgress(String arg) {
+		if(arg.equalsIgnoreCase("progress")) {
+			progress = true;
+		} else {
+			error("Illegal argument: " + arg + ".");
 		}
+	}
 
+	private static void openFile(String fileName) {
 		try {
 			FileReader file = new FileReader(fileName);
 			readFile(file);
 		} catch(FileNotFoundException e) {
-			System.err.println("Argument: " + args[0] + " must be a valid file.");
-			System.exit(1);
+			error("Argument: " + fileName + " must be a valid file.");
 		} catch(IOException e) {
-			System.err.println("Error while trying to read: " + args[0] + ".");
-			System.exit(1);
+			error("Error while trying to read: " + fileName + ".");
 		}
-		///////////////////////////////
-		
-		Board board = new Board(boardFile);
-		PipeBox pipebox = new PipeBox();
-		pipebox.setAll(pipes);
-		Engine eng = new Engine(Algorithm.RecursiveBacktracking, board, pipebox);
-		eng.start();
 	}
 
-	private static void readFile(FileReader file) throws IOException { // TODO: sacar los System.exit()s
+	private static void readFile(FileReader file) throws IOException {
 		try(BufferedReader br = new BufferedReader(file)) {
 			String line = br.readLine();
 
 			if(!getDimensions(line)) {
-				System.err.println("Invalid file format.");
-				System.exit(1);
+				error("Invalid file format.");
 			}
 
 			boardFile = new String[rows];
 			for(int i = 0; i < rows; i++) {
 				line = br.readLine();
 				if(line == null || line.length() > columns) {
-					System.err.println("Invalid file format.");
-					System.exit(1);
+					error("Invalid file format.");
 				}
 
 				boardFile[i] = line;
@@ -108,15 +110,13 @@ public class Main { // TODO: Ver las salidas
 				try {
 					pipes[i] = Integer.parseInt(line);
 				} catch(NumberFormatException e) {
-					System.err.println("Invalid file format.");
-					System.exit(1);
+					error("Invalid file format.");
 				}
 			}
 
 			line = br.readLine();
 			if(line != null) {
-				System.err.println("Invalid file format.");
-				System.exit(1);
+				error("Invalid file format.");
 			}
 
 		}
@@ -156,5 +156,10 @@ public class Main { // TODO: Ver las salidas
 		for(int i = 0; i < pipes.length; i++) {
 			System.out.println("Pipe (#" + i + "): " + pipes[i] + ".");
 		}
+	}
+
+	private static void error(String msj) {
+		System.err.println(msj);
+		System.exit(1);
 	}
 }
