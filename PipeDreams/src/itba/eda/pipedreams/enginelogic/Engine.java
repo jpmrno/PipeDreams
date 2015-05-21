@@ -15,7 +15,6 @@ public class Engine {
 	private Board board;
 	private Method method;
 	private PipeBox pipeBox;
-	private Timer timer;
 
 	private boolean iterative;
 
@@ -29,7 +28,7 @@ public class Engine {
 	}
 
 	public void start() {
-		timer = new Timer();
+		Timer timer = new Timer();
 		timer.startClock();
 		switch(method) {
 			case EXACT:
@@ -52,7 +51,7 @@ public class Engine {
 	private void backtrackingRec(Point point, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
 //		board.print();
 
-		if(longestPath.size() == longestPathSize) {
+		if(longestPathSize == longestPath.size()) {
 			System.out.println("Ya no puede haber mejores soluciones");
 			return;
 		}
