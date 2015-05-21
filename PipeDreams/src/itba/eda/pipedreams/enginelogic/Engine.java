@@ -51,7 +51,7 @@ public class Engine {
 	private void backtrackingRec(Point point, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
 //		board.print();
 
-		if(longestPathSize == longestPath.size()) {
+		if(bestSolution(longestPath)) {
 			System.out.println("Ya no puede haber mejores soluciones");
 			return;
 		}
@@ -90,13 +90,17 @@ public class Engine {
 				board.removePipe(point);
 				pipeBox.add(pipe);
 
-				if(longestPath.size() == longestPathSize) {
+				if(bestSolution(longestPath)) {
 					System.out.println("Ya no puede haber mejores soluciones");
 					return;
 				}
 			}
 		}
 
+	}
+
+	private boolean bestSolution(Deque<Pipe> longestPath) {
+		return longestPath.size() == longestPathSize;
 	}
 
 	private <T> void copyDeque(Deque<T> from, Deque<T> to) { // TODO: Better way?
