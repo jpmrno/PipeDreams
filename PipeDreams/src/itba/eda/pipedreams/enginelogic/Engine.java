@@ -45,7 +45,7 @@ public class Engine {
 		} else {
 			Deque<Pipe> longestPath = new LinkedList<Pipe>(); // TODO: Pipe + Point??
 			Deque<Pipe> currPath = new LinkedList<Pipe>();
-			backtrackingRec(Board.getNext(board.getStartPoint(), board.getStartFlow().opposite()), board.getStartFlow(), currPath, longestPath);
+			backtrackingRec(Board.getNext(board.getStartPoint(), board.getStartFlow()), board.getStartFlow().opposite(), currPath, longestPath);
 		}
 	}
 
@@ -55,17 +55,17 @@ public class Engine {
 
 		if(!board.withinLimits(point)) {
 			if(currentPath.size() > longestPath.size()){
-				System.out.println("Soy una mejor solucion de longitud: " + longestPath.size()); // Logging
+				System.out.println("Soy una mejor solucion de longitud: " + (currentPath.size() + 1)); // Logging
 				copyDeque(currentPath, longestPath); // TODO: Ask if this is the longest possible path, where?
 			}
 			return;
 		}
 
 		if(!board.isEmpty(point)) {
-			Pipe pipe = board.get(point);
+			Pipe pipe = board.getPipe(point);
 			if(pipe == Pipe.CROSS) {
 				currentPath.push(pipe);
-				backtrackingRec(Board.getNext(point, from), pipe.flow(from).opposite(), currentPath, longestPath);
+				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from).opposite(), currentPath, longestPath);
 				currentPath.pop();
 			}
 			System.out.println("Encontre pared o cross");
@@ -76,10 +76,10 @@ public class Engine {
 			if(pipe.canFlow(from) && pipeBox.get(pipe) > 0) {
 				System.out.println("Puse pipe");
 				pipeBox.remove(pipe);
-				board.setPipe(pipe, point);
+				board.putPipe(pipe, point);
 				currentPath.push(pipe);
 
-				backtrackingRec(Board.getNext(point, from), pipe.flow(from).opposite(), currentPath, longestPath);
+				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from).opposite(), currentPath, longestPath);
 
 				currentPath.pop();
 				board.removePipe(point);

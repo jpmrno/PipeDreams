@@ -20,36 +20,6 @@ public class Board {
 		}
 	}
 
-	public boolean setPipe(Pipe pipe, Point point) {
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
-		if(board[point.getRow()][point.getColumn()] == Tile.EMPTY) {
-			Tile tile = Tile.get(pipe);
-
-			if(tile != null) {
-				board[point.getRow()][point.getColumn()] = tile;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean removePipe(Point point) {
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
-		if(board[point.getRow()][point.getColumn()].getPipe() != null) {
-			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
-			return true;
-		}
-
-		return false;
-	}
-
 	private Tile setPiece(char c, int row, int column) {
 		Tile piece;
 
@@ -79,12 +49,42 @@ public class Board {
 		return piece;
 	}
 
-	public Pipe get(Point point) { // TODO: not empty
+	public Pipe getPipe(Point point) { // TODO: not empty
 		if(!withinLimits(point)) {
 			throw new IndexOutOfBoundsException();
 		}
 
 		return board[point.getRow()][point.getColumn()].pipe;
+	}
+
+	public boolean putPipe(Pipe pipe, Point point) {
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if(board[point.getRow()][point.getColumn()] == Tile.EMPTY) {
+			Tile tile = Tile.get(pipe);
+
+			if(tile != null) {
+				board[point.getRow()][point.getColumn()] = tile;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean removePipe(Point point) {
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if(board[point.getRow()][point.getColumn()].getPipe() != null) {
+			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
+			return true;
+		}
+
+		return false;
 	}
 
 	public static Point getNext(Point point, Dir dir) {
@@ -112,10 +112,6 @@ public class Board {
 
 	public boolean withinLimits(Point point) {
 		return point.getRow() >= 0 && point.getRow() < board.length && point.getColumn() >= 0 && point.getColumn() < board[0].length;
-	}
-
-	public boolean isBlocked(Point point) {
-		return !isEmpty(point) && board[point.getRow()][point.getColumn()].getPipe() == null;
 	}
 
 	public Point getStartPoint() {
