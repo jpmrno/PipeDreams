@@ -1,19 +1,27 @@
 package itba.eda.pipedreams.tablelogic;
 
 public class Point {
-    private int x;
-    private int y;
+    private int row;
+    private int column;
 
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Point(int row, int column) {
+        this.row = row;
+        this.column = column;
     }
 
-    public int getX() {
-        return x;
+    public int getRow() {
+        return row;
     }
 
-    public int getY() {
-        return y;
+    public int getColumn() {
+        return column;
     }
+
+	@Override
+	public String toString() {
+		return "Point{" +
+				"row=" + row +
+				", column=" + column +
+				'}';
+	}
 }

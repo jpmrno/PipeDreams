@@ -1,6 +1,7 @@
 package itba.eda.pipedreams;
 
-import itba.eda.pipedreams.tablelogic.GameBoard;
+import itba.eda.pipedreams.enginelogic.Engine;
+import itba.eda.pipedreams.tablelogic.Board;
 
 import java.io.*;
 import java.util.regex.Pattern;
@@ -41,8 +42,9 @@ public class Main { // TODO: Ver las salidas // TODO: sacar o modificar los Syst
 
 		openFile(fileName);
 
-		GameBoard board = new GameBoard(rows, columns, boardFile);
-		System.out.println(board);
+		Board board = new Board(rows, columns, boardFile);
+		Engine engine = new Engine(board, Method.EXACT, pipes);
+		engine.start();
 	}
 
 	private static void getMethod(String methodString, String arg) {

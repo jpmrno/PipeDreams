@@ -5,20 +5,14 @@ public enum Dir {
 	SOUTH,
 	EAST,
 	WEST;
-	
-	public static Dir getBySymbol(String str){
-		switch (str){
-			case "N":
-				return NORTH;
-			case "S":
-				return SOUTH;
-			case "W":
-				return WEST;
-			case "E":
-				return EAST;
-			default:
-				return null;
-		}
+
+	Dir opposite;
+
+	static {
+		NORTH.opposite = SOUTH;
+		SOUTH.opposite = NORTH;
+		EAST.opposite = WEST;
+		WEST.opposite = EAST;
 	}
 
 	public static Dir getBySymbol(char c){
@@ -36,24 +30,7 @@ public enum Dir {
 		}
 	}
 	
-	public Dir getOpposite() {
-		Dir ret = null;
-		
-		switch (this){
-			case NORTH:
-				ret = SOUTH;
-				break;
-			case SOUTH:
-				ret = NORTH;
-				break;
-			case WEST:
-				ret = EAST;
-				break;
-			case EAST:
-				ret = WEST;
-				break;
-		}
-		
-		return ret;
+	public Dir opposite() {
+		return opposite;
 	}
 }

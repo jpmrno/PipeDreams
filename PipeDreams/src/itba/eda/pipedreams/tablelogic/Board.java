@@ -1,107 +1,208 @@
 package itba.eda.pipedreams.tablelogic;
 
+import itba.eda.pipedreams.pipelogic.Pipe;
+
 public class Board {
-	
+
 	private Tile[][] board;
-	private int x_flow;
-	private int y_flow;
-	private Dir flow;
+	private Point startPoint;
+	private Dir startFlow;
 
-	public Board(String[] tiles){
-		board = new Tile[tiles.length][tiles[0].length()];
+	public Board(int rows, int columns, String[] tiles) {
+		board = new Tile[rows][columns];
 
-		boolean sourceFound = false;
-
-		for(int i=0; i < tiles.length; i++) {
-			for(int j=0; j < tiles[0].length(); j++) {
-				if (parseTile(tiles[i].charAt(j), i, j)) {
-					if (!sourceFound) {
-						sourceFound = true;
-					} else if (sourceFound) {
-						throw new IllegalArgumentException("Illegal board");
-					}
+		for(int i = 0; i < tiles.length; i++) {
+			for(int j = 0; j < tiles[0].length(); j++) {
+				if(setPiece(tiles[i].charAt(j), i, j) == null) {
+					throw new IllegalArgumentException("Invalid board.");
 				}
 			}
 		}
 	}
 
-		/**
-		 * @return returns true if a source is found
- 		 */
-	private boolean parseTile(Character c, int i, int j) {
+	public boolean setPipe(Pipe pipe, Point point) {
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if(board[point.getRow()][point.getColumn()] == Tile.EMPTY) {
+			Tile tile = Tile.get(pipe);
+
+			if(tile != null) {
+				board[point.getRow()][point.getColumn()] = tile;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean removePipe(Point point) {
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		if(board[point.getRow()][point.getColumn()].getPipe() != null) {
+			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
+			return true;
+		}
+
+		return false;
+	}
+
+	private Tile setPiece(char c, int row, int column) {
+		Tile piece;
+
 		switch(Character.toUpperCase(c)) {
-
-			case '#':
-				board[i][j] = new Tile(i, j, true);
-				return false;
-
-			case ' ':
-				board[i][j] = new Tile(i, j, false);
-				return false;
-
 			case 'N':
 			case 'S':
 			case 'W':
 			case 'E':
-				board[i][j] = new Tile(i, j, true);
-				x_flow = i;
-				y_flow = j;
-				flow = Dir.getBySymbol(c.toString());
-				return true;
-
+				if(startPoint != null) {
+					return null;
+				}
+				startFlow = Dir.getBySymbol(c);
+				startPoint = new Point(row, column);
+				piece =  Tile.valueOf("START_" + c);
+				break;
+			case ' ':
+				piece =  Tile.EMPTY;
+				break;
+			case '#':
+				piece =  Tile.WALL;
+				break;
 			default:
-				throw new IllegalArgumentException("Illegal Board");
+				return null;
+		}
+
+		board[row][column] = piece;
+		return piece;
+	}
+
+	public Pipe get(Point point) { // TODO: not empty
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		return board[point.getRow()][point.getColumn()].pipe;
+	}
+
+	public static Point getNext(Point point, Dir dir) {
+		switch(dir) {
+			case NORTH:
+				return new Point(point.getRow() - 1, point.getColumn());
+			case SOUTH:
+				return new Point(point.getRow() + 1, point.getColumn());
+			case WEST:
+				return new Point(point.getRow(), point.getColumn() - 1);
+			case EAST:
+				return new Point(point.getRow(), point.getColumn() + 1);
+			default:
+				throw new IllegalStateException();
 		}
 	}
 
-	public Tile getTile(Point point){
-		int x = point.getX();
-		int y = point.getY();
-
-		if(x >= board.length || x < 0 || y >= board[0].length || y < 0) {
-			return null;
-		} else {
-			return board[x][y];
+	public boolean isEmpty(Point point) {
+		if(!withinLimits(point)) {
+			throw new IndexOutOfBoundsException();
 		}
-	}
-	
-	public void setFlow(int x, int y, Dir dir){
-		x_flow = x;
-		y_flow = y;
-		flow = dir;
+
+		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
 	}
 
-	public int getXFlow(){
-		return x_flow;
+	public boolean withinLimits(Point point) {
+		return point.getRow() >= 0 && point.getRow() < board.length && point.getColumn() >= 0 && point.getColumn() < board[0].length;
 	}
-	
-	public int getYFlow(){
-		return y_flow;
+
+	public boolean isBlocked(Point point) {
+		return !isEmpty(point) && board[point.getRow()][point.getColumn()].getPipe() == null;
 	}
-	
-	public Dir getDirFlow(){
-		return flow;
+
+	public Point getStartPoint() {
+		return startPoint;
+	}
+
+	public Dir getStartFlow() {
+		return startFlow;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder ret = new StringBuilder();
+		for(Tile[] row : board) {
+			for(Tile piece : row) {
+				ret.append(piece).append('\t');
+			}
+			ret.append('\n');
+		}
+		return ret.toString();
 	}
 
 	public void print() {
-		System.out.println("-------------------------");
-		for(int i=0; i < board.length; i++) {
-			for(int j=0; j < board[0].length; j++) {
-				Tile curr = board[i][j];
-				if(curr.hasPipe()) {
-					System.out.print("\t" + curr.getPipe().getId());
-				} else if(curr.isBlocked()) {
-					System.out.print("\t#");
-				} else {
-					System.out.print("\t ");
-				}
+		for(Tile[] row : board) {
+			for(Tile piece : row) {
+				System.out.print(piece.toString() + '\t');
 			}
 			System.out.println();
 		}
-		System.out.println("-------------------------");
 	}
 
-	public Tile getOriginTile() {
-		return board[x_flow][y_flow];
+	public static enum Tile {
+		L1("1", Pipe.L1),
+		L2("2", Pipe.L2),
+		L3("3", Pipe.L3),
+		L4("4", Pipe.L4),
+		I1("5", Pipe.I1),
+		I2("6", Pipe.I2),
+		CROSS("7", Pipe.CROSS),
+		EMPTY(".", null),
+		WALL("#", null),
+		START_N("N", null),
+		START_S("S", null),
+		START_E("E", null),
+		START_W("W", null);
+
+		private String representation;
+		private Pipe pipe;
+
+		private Tile(String representation, Pipe pipe) {
+			if(representation == null) {
+				throw new IllegalArgumentException();
+			}
+
+			this.representation = representation;
+			this.pipe = pipe;
+		}
+
+		public Pipe getPipe() {
+			return pipe;
+		}
+
+		@Override
+		public String toString() {
+			return representation;
+		}
+
+		public static Tile get(Pipe pipe) {
+			switch(pipe) {
+				case L1:
+					return Tile.L1;
+				case L2:
+					return Tile.L2;
+				case L3:
+					return Tile.L3;
+				case L4:
+					return Tile.L4;
+				case I1:
+					return Tile.I1;
+				case I2:
+					return Tile.I2;
+				case CROSS:
+					return Tile.CROSS;
+				default:
+					return null;
+			}
+		}
 	}
+
 }

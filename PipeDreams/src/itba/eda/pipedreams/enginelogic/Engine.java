@@ -1,124 +1,99 @@
 package itba.eda.pipedreams.enginelogic;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Queue;
-
+import itba.eda.pipedreams.Method;
 import itba.eda.pipedreams.pipelogic.Pipe;
 import itba.eda.pipedreams.pipelogic.PipeBox;
 import itba.eda.pipedreams.tablelogic.Board;
 import itba.eda.pipedreams.tablelogic.Dir;
 import itba.eda.pipedreams.tablelogic.Point;
-import itba.eda.pipedreams.tablelogic.Tile;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class Engine {
-	
-	private Algorithm usedAlgorithm;
-	
-	private PipeBox pipeBox;
+
 	private Board board;
-	Timer timer = new Timer();
-	
-	public Engine(Algorithm alg, Board board, PipeBox pipeBox) {
-		this.pipeBox = pipeBox;
+	private Method method;
+	private PipeBox pipeBox;
+	private Timer timer;
+
+	private boolean iterative;
+
+	private int longestPathSize;
+
+	public Engine(Board board, Method method, int[] sizes) {
 		this.board = board;
-		usedAlgorithm = alg;
+		this.method = method;
+		this.pipeBox = new PipeBox(sizes);
+		// TODO: Set longestPathSize!
 	}
-	
+
 	public void start() {
-		//TODO: Notify frontend observers
-		Deque<Pipe> longestPath = new LinkedList<Pipe>();
-		Deque<Pipe> currPath = new LinkedList<Pipe>();
-		Tile origin = board.getOriginTile();
-		
+		timer = new Timer();
 		timer.startClock();
-
-		switch (usedAlgorithm){
-			case RecursiveBacktracking:
-				RecursiveBacktracking(board.getTile(origin.getNext(board.getDirFlow())), board.getDirFlow(), currPath, longestPath);
-				break;
-			default:
+		switch(method) {
+			case EXACT:
+				backtracking();
 				break;
 		}
-
 		timer.stopClock();
-		timer.printRunningTime();
+	}
 
-		System.out.println("Max: " + longestPath.size());
+	private void backtracking() {
+		if(iterative) {
+
+		} else {
+			Deque<Pipe> longestPath = new LinkedList<Pipe>(); // TODO: Pipe + Point??
+			Deque<Pipe> currPath = new LinkedList<Pipe>();
+			backtrackingRec(Board.getNext(board.getStartPoint(), board.getStartFlow().opposite()), board.getStartFlow(), currPath, longestPath);
+		}
+	}
+
+	private void backtrackingRec(Point point, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
 		board.print();
-	}
+		System.out.println(point);
 
-	/**
-	 *
-	 * @param curr Tile actual
-	 * @param from desde que punto cardinal vengo
-	 * @param currentPath
-	 * @param longestPath
-	 */
-	public void RecursiveBacktracking(Tile curr, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath){
-		//TODO: REMOVE DEBUG PRINT
-//		board.print();
-
-		if (curr == null){
-//			System.out.println("Solution found");
+		if(!board.withinLimits(point)) {
 			if(currentPath.size() > longestPath.size()){
-				copyFromScratch(currentPath, longestPath);
+				System.out.println("Soy una mejor solucion de longitud: " + longestPath.size()); // Logging
+				copyDeque(currentPath, longestPath); // TODO: Ask if this is the longest possible path, where?
 			}
 			return;
 		}
 
-		if (curr.isBlocked()){
-//			System.out.println("Blocked");
-			return;
-		}
-
-		if (curr.hasPipe()){
-//			System.out.println("Current Tile already has a pipe");
-			if (curr.getPipe().getId() == PipeBox.CROSS_PIPE_ID){
-				Dir to = pipeBox.getItem(PipeBox.CROSS_PIPE_ID).flow(from);
-				currentPath.push(curr.getPipe());
-				RecursiveBacktracking(board.getTile(curr.getNext(to)), to.getOpposite(), currentPath, longestPath);
+		if(!board.isEmpty(point)) {
+			Pipe pipe = board.get(point);
+			if(pipe == Pipe.CROSS) {
+				currentPath.push(pipe);
+				backtrackingRec(Board.getNext(point, from), pipe.flow(from).opposite(), currentPath, longestPath);
 				currentPath.pop();
 			}
+			System.out.println("Encontre pared o cross");
 			return;
 		}
 
-		if(pipeBox.isEmpty()){
-//			System.out.println("PipeBox is empty");
-			return;
-		}
-		
-		for (int i = 0; i < pipeBox.getPipeSize(); i++){
-//			System.out.println("Consultando por pipe: " + pipeBox.getItem(i).getId() + " Cantidad de elementos: " + pipeBox.getPipeTypeSize(i));
+		for(Pipe pipe : pipeBox) {
+			if(pipe.canFlow(from) && pipeBox.get(pipe) > 0) {
+				System.out.println("Puse pipe");
+				pipeBox.remove(pipe);
+				board.setPipe(pipe, point);
+				currentPath.push(pipe);
 
-			Pipe newPipe = pipeBox.getItem(i);
-			Dir to = newPipe.flow(from);
-			
-			if (pipeBox.hasItem(i) && newPipe.canFlow(from)){
-				
-				pipeBox.remove(i);
-				curr.setPipe(newPipe);
-				currentPath.push(newPipe);
+				backtrackingRec(Board.getNext(point, from), pipe.flow(from).opposite(), currentPath, longestPath);
 
-				Point next = curr.getNext(to); //Consigo la proxima posicion a la que tengo que ir
-				RecursiveBacktracking(board.getTile(next), to.getOpposite(), currentPath, longestPath);
-				
 				currentPath.pop();
-				curr.removePipe();
-				pipeBox.add(i);
+				board.removePipe(point);
+				pipeBox.add(pipe);
 			}
 		}
-		
+
 	}
-	
-	public static void copyFromScratch(Queue<Pipe> from, Queue<Pipe> to) {
-		//TODO: Se puede optimizar recorriendo los 2 y removiendo hasta que encuentre uno que sean iguales(en posicion o en tipo de pipe?)
-		while(!to.isEmpty())
-			to.remove();
-		for (Pipe aux: from){
+
+	private <T> void copyDeque(Deque<T> from, Deque<T> to) { // TODO: Better way?
+		to.clear();
+
+		for (T aux : from) {
 			to.add(aux);
 		}
-		
 	}
-	
 }

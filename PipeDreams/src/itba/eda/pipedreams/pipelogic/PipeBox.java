@@ -1,62 +1,57 @@
 package itba.eda.pipedreams.pipelogic;
 
-public class PipeBox {
-	public static final int CROSS_PIPE_ID = 6;
-	private final static int ITEMS_SIZE = PipeFactory.getPipeTypesSize();
-	private int[] items;
-	private int currSize;
-	
-	public PipeBox() {
-		items = new int[ITEMS_SIZE];
-		currSize = 0;
-	}
-	
-	public void setItem(int pipeType, int count) {
-		items[pipeType] = count;
-		currSize += count;
-	}
-	
-	public boolean hasItem(int pipeType) {
-		return items[pipeType] > 0;
-	}
-	
-	public Pipe getItem(int pipeType) {
-		return PipeFactory.getPipe(pipeType);
-	}
-	
-	public void remove(int pipeType) {
-		items[pipeType]--;
-		currSize--;
-	}
-	
-	public void add(int pipeType) {
-		items[pipeType]++;
-		currSize++;
-	}
-	
-	public int getPipeSize() {
-		return ITEMS_SIZE;
-	}
-	
-	public int getCurrSize() {
-		return currSize;
-	}
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.Map;
 
-	public int getPipeTypeSize(int i) {
-		return items[i];
-	}
-	
-	public boolean isEmpty() {
-		return currSize == 0;
-	}
-	
-	//TODO: Improve
-	public void setAll(int[] values){
-		
-		for (int i = 0; i < values.length; i++){
-			items[i] = values[i];
-			currSize += values[i];
+public class PipeBox implements Iterable<Pipe> {
+//	private Pipe[] allPipes;
+//	private int[] sizes;
+
+	private final Map<Pipe, Integer> pipes; // Necessary?
+
+	public PipeBox(int[] sizes) {
+		Pipe[] pipesVec = Pipe.values();
+
+		if(sizes.length != pipesVec.length) {
+			throw new IllegalArgumentException();
+		}
+
+		pipes = new EnumMap<Pipe, Integer>(Pipe.class);
+		for(int i = 0; i < pipesVec.length; i++) {
+			if(sizes[i] < 0) {
+				throw new IllegalArgumentException();
+			}
+			pipes.put(pipesVec[i], sizes[i]);
 		}
 	}
-	
+
+	public int get(Pipe pipe) {
+		return pipes.get(pipe);
+	}
+
+	public void add(Pipe pipe) {
+		pipes.put(pipe, pipes.get(pipe) + 1);
+	}
+
+	public void remove(Pipe pipe) {
+		pipes.put(pipe, pipes.get(pipe) - 1);
+	}
+
+	@Override
+	public Iterator<Pipe> iterator() {
+		return new Iterator<Pipe>() {
+			int i = 0;
+
+			@Override
+			public boolean hasNext() {
+				return i < Pipe.values().length;
+			}
+
+			@Override
+			public Pipe next() {
+				return Pipe.values()[i++];
+			}
+		};
+	}
 }

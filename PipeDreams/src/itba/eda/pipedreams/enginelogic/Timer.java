@@ -20,8 +20,10 @@ public class Timer {
 	}
 	
 	public void stopClock(){
-		runningTime = System.currentTimeMillis() - runningTime;
-		isRunning = false;
+		if(isRunning) {
+			runningTime = System.currentTimeMillis() - runningTime;
+			isRunning = false;
+		}
 	}
 
 	public long getRunningTime() {
