@@ -12,6 +12,7 @@ public class Timer {
 	
 	public void startClock() {
 		if(!isRunning) {
+			System.out.println("Timer started");
 			runningTime = System.currentTimeMillis();
 			isRunning = true;
 		} else {
@@ -23,6 +24,7 @@ public class Timer {
 		if(isRunning) {
 			runningTime = System.currentTimeMillis() - runningTime;
 			isRunning = false;
+			printRunningTime();
 		}
 	}
 

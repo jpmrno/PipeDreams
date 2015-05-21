@@ -25,7 +25,7 @@ public class Engine {
 		this.board = board;
 		this.method = method;
 		this.pipeBox = new PipeBox(sizes);
-		// TODO: Set longestPathSize!
+		this.longestPathSize = pipeBox.size() + pipeBox.get(Pipe.CROSS);
 	}
 
 	public void start() {
@@ -50,8 +50,12 @@ public class Engine {
 	}
 
 	private void backtrackingRec(Point point, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
-		board.print();
-		System.out.println(point);
+//		board.print();
+
+		if(longestPath.size() == longestPathSize) {
+			System.out.println("Ya no puede haber mejores soluciones");
+			return;
+		}
 
 		if(!board.withinLimits(point)) {
 			if(currentPath.size() > longestPath.size()){
@@ -68,13 +72,15 @@ public class Engine {
 				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from).opposite(), currentPath, longestPath);
 				currentPath.pop();
 			}
-			System.out.println("Encontre pared o cross");
+			return;
+		}
+
+		if(pipeBox.isEmpty()) {
 			return;
 		}
 
 		for(Pipe pipe : pipeBox) {
 			if(pipe.canFlow(from) && pipeBox.get(pipe) > 0) {
-				System.out.println("Puse pipe");
 				pipeBox.remove(pipe);
 				board.putPipe(pipe, point);
 				currentPath.push(pipe);
@@ -84,6 +90,11 @@ public class Engine {
 				currentPath.pop();
 				board.removePipe(point);
 				pipeBox.add(pipe);
+
+				if(longestPath.size() == longestPathSize) {
+					System.out.println("Ya no puede haber mejores soluciones");
+					return;
+				}
 			}
 		}
 

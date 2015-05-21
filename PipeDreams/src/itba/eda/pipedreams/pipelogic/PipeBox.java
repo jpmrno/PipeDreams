@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class PipeBox implements Iterable<Pipe> {
-//	private Pipe[] allPipes;
+	private int pipesSize;
+
+	private Pipe[] allPipes = Pipe.values();
 //	private int[] sizes;
 
 	private final Map<Pipe, Integer> pipes; // Necessary?
@@ -23,6 +25,7 @@ public class PipeBox implements Iterable<Pipe> {
 				throw new IllegalArgumentException();
 			}
 			pipes.put(pipesVec[i], sizes[i]);
+			pipesSize+= sizes[i];
 		}
 	}
 
@@ -32,10 +35,24 @@ public class PipeBox implements Iterable<Pipe> {
 
 	public void add(Pipe pipe) {
 		pipes.put(pipe, pipes.get(pipe) + 1);
+		pipesSize++;
 	}
 
 	public void remove(Pipe pipe) {
 		pipes.put(pipe, pipes.get(pipe) - 1);
+		pipesSize--;
+	}
+
+	public boolean isEmpty() {
+		if(pipesSize < 0) {
+			throw new IllegalStateException();
+		}
+
+		return pipesSize <= 0;
+	}
+
+	public int size() {
+		return pipesSize;
 	}
 
 	@Override
@@ -45,12 +62,12 @@ public class PipeBox implements Iterable<Pipe> {
 
 			@Override
 			public boolean hasNext() {
-				return i < Pipe.values().length;
+				return i < allPipes.length;
 			}
 
 			@Override
 			public Pipe next() {
-				return Pipe.values()[i++];
+				return allPipes[i++];
 			}
 		};
 	}
