@@ -1,6 +1,6 @@
-package itba.eda.pipedreams.tablelogic;
+package itba.eda.pipedreams.board;
 
-import itba.eda.pipedreams.pipelogic.Pipe;
+import itba.eda.pipedreams.pipe.Pipe;
 
 public class Board {
 

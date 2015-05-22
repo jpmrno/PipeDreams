@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.pipelogic;
+package itba.eda.pipedreams.pipe;
 
 import java.util.Iterator;
 

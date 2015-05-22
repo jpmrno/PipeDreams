@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.enginelogic;
+package itba.eda.pipedreams.engine;
 
 public class Timer {
 	private long runningTime;
@@ -42,5 +42,9 @@ public class Timer {
 		} else {
 			System.out.println("Running time was: " + runningTime / 1000 + "s");
 		}
+	}
+
+	public static long convertToMiliseconds(int min) {
+		return min * 60 * 1000;
 	}
 }

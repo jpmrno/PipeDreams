@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.tablelogic;
+package itba.eda.pipedreams.board;
 
 public enum Dir {
 	NORTH,

@@ -1,6 +1,6 @@
-package itba.eda.pipedreams.pipelogic;
+package itba.eda.pipedreams.pipe;
 
-import itba.eda.pipedreams.tablelogic.Dir;
+import itba.eda.pipedreams.board.Dir;
 
 public enum Pipe implements BasicPipe { // TODO: Remove canFlow()?
 	L1 {

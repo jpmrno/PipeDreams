@@ -1,9 +1,7 @@
 package itba.eda.pipedreams;
 
-import itba.eda.pipedreams.enginelogic.Engine;
-import itba.eda.pipedreams.pipelogic.Pipe;
-import itba.eda.pipedreams.tablelogic.Board;
-import itba.eda.pipedreams.tablelogic.Dir;
+import itba.eda.pipedreams.engine.Engine;
+import itba.eda.pipedreams.board.Board;
 
 import java.io.*;
 import java.util.regex.Pattern;

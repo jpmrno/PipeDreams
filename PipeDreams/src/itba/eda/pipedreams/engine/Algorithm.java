@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.enginelogic;
+package itba.eda.pipedreams.engine;
 
 public enum Algorithm {
 	RecursiveBacktracking,
