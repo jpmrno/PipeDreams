@@ -1,58 +1,81 @@
 package itba.eda.pipedreams.pipelogic;
 
-import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class PipeBox implements Iterable<Pipe> {
 	private int pipesSize;
 
 	private Pipe[] allPipes = Pipe.values();
-//	private int[] sizes;
+	private int[] sizes;
 
-	private final Map<Pipe, Integer> pipes; // Necessary?
+//	private final Map<Pipe, Integer> pipes; // Necessary?
+
+//	public PipeBox(int[] sizes) {
+//		Pipe[] pipesVec = Pipe.values();
+//
+//		if(sizes.length != pipesVec.length) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		pipes = new EnumMap<Pipe, Integer>(Pipe.class);
+//		for(int i = 0; i < pipesVec.length; i++) {
+//			if(sizes[i] < 0) {
+//				throw new IllegalArgumentException();
+//			}
+//			pipes.put(pipesVec[i], sizes[i]);
+//			pipesSize+= sizes[i];
+//		}
+//	}
 
 	public PipeBox(int[] sizes) {
-		Pipe[] pipesVec = Pipe.values();
-
-		if(sizes.length != pipesVec.length) {
+		if(sizes.length != allPipes.length) {
 			throw new IllegalArgumentException();
 		}
 
-		pipes = new EnumMap<Pipe, Integer>(Pipe.class);
-		for(int i = 0; i < pipesVec.length; i++) {
+		this.sizes = new int[allPipes.length];
+
+		for(int i = 0; i < allPipes.length; i++) {
 			if(sizes[i] < 0) {
 				throw new IllegalArgumentException();
 			}
-			pipes.put(pipesVec[i], sizes[i]);
-			pipesSize+= sizes[i];
+			this.sizes[i] = sizes[i];
+			this.pipesSize += sizes[i];
 		}
+		this.pipesSize += + sizes[6];
 	}
 
-	public int get(Pipe pipe) {
-		return pipes.get(pipe);
+//	public int get(Pipe pipe) {
+//		return pipes.get(pipe);
+//	}
+//
+//	public void add(Pipe pipe) {
+//		pipes.put(pipe, pipes.get(pipe) + 1);
+//		pipesSize++;
+//	}
+//
+//	public void remove(Pipe pipe) {
+//		pipes.put(pipe, pipes.get(pipe) - 1);
+//		pipesSize--;
+//	}
+
+	public Pipe getPipe(int i) {
+		return allPipes[i];
 	}
 
-	public void add(Pipe pipe) {
-		pipes.put(pipe, pipes.get(pipe) + 1);
-		pipesSize++;
+	public int getSize(int i) {
+		return sizes[i];
 	}
 
-	public void remove(Pipe pipe) {
-		pipes.put(pipe, pipes.get(pipe) - 1);
-		pipesSize--;
+	public void addPipe(int i) {
+		sizes[i]++;
 	}
 
-	public boolean isEmpty() {
-		if(pipesSize < 0) {
-			throw new IllegalStateException();
-		}
-
-		return pipesSize <= 0;
+	public void removePipe(int i) {
+		sizes[i]--;
 	}
 
-	public int size() {
-		return pipesSize;
+	public int length() {
+		return allPipes.length;
 	}
 
 	@Override
@@ -70,5 +93,9 @@ public class PipeBox implements Iterable<Pipe> {
 				return allPipes[i++];
 			}
 		};
+	}
+
+	public int getLongestPossible() {
+		return pipesSize;
 	}
 }

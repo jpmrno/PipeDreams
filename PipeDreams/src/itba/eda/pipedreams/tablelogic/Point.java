@@ -9,13 +9,25 @@ public class Point {
         this.column = column;
     }
 
-    public int getRow() {
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+	public int getRow() {
         return row;
     }
 
     public int getColumn() {
         return column;
     }
+
+	public Point clone() {
+		return new Point(row, column);
+	}
 
 	@Override
 	public String toString() {

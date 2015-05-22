@@ -6,7 +6,7 @@ public enum Dir {
 	EAST,
 	WEST;
 
-	Dir opposite;
+	private Dir opposite;
 
 	static {
 		NORTH.opposite = SOUTH;

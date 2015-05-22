@@ -18,6 +18,10 @@ public class Board {
 				}
 			}
 		}
+
+		if(startPoint == null) {
+			throw new IllegalArgumentException("Invalid board.");
+		}
 	}
 
 	private Tile setPiece(char c, int row, int column) {
@@ -49,37 +53,20 @@ public class Board {
 		return piece;
 	}
 
-	public Pipe getPipe(Point point) { // TODO: not empty
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
+	public Pipe getPipe(Point point) {
 		return board[point.getRow()][point.getColumn()].pipe;
 	}
 
 	public boolean putPipe(Pipe pipe, Point point) {
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
-		if(board[point.getRow()][point.getColumn()] == Tile.EMPTY) {
-			Tile tile = Tile.get(pipe);
-
-			if(tile != null) {
-				board[point.getRow()][point.getColumn()] = tile;
-				return true;
-			}
+		if(isEmpty(point)) { // TODO: Remove check?
+			board[point.getRow()][point.getColumn()] = Tile.get(pipe);
 		}
 
 		return false;
 	}
 
 	public boolean removePipe(Point point) {
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
-		if(board[point.getRow()][point.getColumn()].getPipe() != null) {
+		if(hasPipe(point)) {
 			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
 			return true;
 		}
@@ -88,26 +75,45 @@ public class Board {
 	}
 
 	public static Point getNext(Point point, Dir dir) {
+		int row = point.getRow();
+		int column = point.getColumn();
+
 		switch(dir) {
 			case NORTH:
-				return new Point(point.getRow() - 1, point.getColumn());
+				point.setRow(row - 1);
+				break;
 			case SOUTH:
-				return new Point(point.getRow() + 1, point.getColumn());
+				point.setRow(row + 1);
+				break;
 			case WEST:
-				return new Point(point.getRow(), point.getColumn() - 1);
+				point.setColumn(column - 1);
+				break;
 			case EAST:
-				return new Point(point.getRow(), point.getColumn() + 1);
+				point.setColumn(column + 1);
+				break;
 			default:
 				throw new IllegalStateException();
 		}
+
+		return point;
+	}
+
+	public static Point getPrevious(Point point, Dir dir) {
+		return getNext(point, dir.opposite());
 	}
 
 	public boolean isEmpty(Point point) {
-		if(!withinLimits(point)) {
-			throw new IndexOutOfBoundsException();
-		}
-
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
+	}
+
+	public boolean hasPipe(Point point) {
+		return board[point.getRow()][point.getColumn()].getPipe() != null;
+	}
+
+	public boolean isBlocked(Point point, Dir from) {
+		Tile tile = board[point.getRow()][point.getColumn()];
+
+		return tile != Tile.EMPTY && (tile.pipe == null || tile.pipe.flow(from) == null);
 	}
 
 	public boolean withinLimits(Point point) {

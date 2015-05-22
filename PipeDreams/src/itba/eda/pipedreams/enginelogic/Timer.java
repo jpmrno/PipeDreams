@@ -38,9 +38,9 @@ public class Timer {
 
 	public void printRunningTime() {
 		if(isRunning) {
-			System.out.println("Running time is: " + runningTime + "ms");
+			System.out.println("Running time is: " + (System.currentTimeMillis() - runningTime) / 1000 + "s");
 		} else {
-			System.out.println("Running time was: " + runningTime + "ms");
+			System.out.println("Running time was: " + runningTime / 1000 + "s");
 		}
 	}
 }

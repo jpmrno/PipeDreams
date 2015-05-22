@@ -16,19 +16,21 @@ public class Engine {
 	private Method method;
 	private PipeBox pipeBox;
 
+	private Timer timer;
+
 	private boolean iterative;
 
-	private int longestPathSize;
+	//private Map<Pipe, Integer> pipeBox;
 
 	public Engine(Board board, Method method, int[] sizes) {
 		this.board = board;
 		this.method = method;
-		this.pipeBox = new PipeBox(sizes);
-		this.longestPathSize = pipeBox.size() + pipeBox.get(Pipe.CROSS);
+		//this.pipeBox = new EnumMap<Pipe, Integer>(Pipe.class);
+		pipeBox = new PipeBox(sizes);
 	}
 
 	public void start() {
-		Timer timer = new Timer();
+		timer = new Timer();
 		timer.startClock();
 		switch(method) {
 			case EXACT:
@@ -44,69 +46,79 @@ public class Engine {
 		} else {
 			Deque<Pipe> longestPath = new LinkedList<Pipe>(); // TODO: Pipe + Point??
 			Deque<Pipe> currPath = new LinkedList<Pipe>();
-			backtrackingRec(Board.getNext(board.getStartPoint(), board.getStartFlow()), board.getStartFlow().opposite(), currPath, longestPath);
+			backtrackingRec(Board.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
+			System.out.println(board);
 		}
 	}
 
-	private void backtrackingRec(Point point, Dir from, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
-//		board.print();
+	private void backtrackingRec(Point point, Dir to, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
+		Dir from = to.opposite();
 
-		if(bestSolution(longestPath)) {
-			System.out.println("Ya no puede haber mejores soluciones");
-			return;
+		try {
+			Thread.sleep(1000);
+		} catch(InterruptedException e) {
+			e.printStackTrace();
 		}
 
+		System.out.println(board);
+
 		if(!board.withinLimits(point)) {
-			if(currentPath.size() > longestPath.size()){
-				System.out.println("Soy una mejor solucion de longitud: " + (currentPath.size() + 1)); // Logging
+			if(currentPath.size() > longestPath.size()) {
+				System.out.println("Mejor solucion de: " + (currentPath.size() + 1));
+				timer.printRunningTime();
 				copyDeque(currentPath, longestPath); // TODO: Ask if this is the longest possible path, where?
 			}
 			return;
 		}
 
 		if(!board.isEmpty(point)) {
-			Pipe pipe = board.getPipe(point);
-			if(pipe == Pipe.CROSS) {
+			if(!board.isBlocked(point, from)) {
+				Pipe pipe = board.getPipe(point);
 				currentPath.push(pipe);
-				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from).opposite(), currentPath, longestPath);
+
+				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from), currentPath, longestPath);
+				Board.getPrevious(point, pipe.flow(from));
+
 				currentPath.pop();
 			}
 			return;
 		}
 
-		if(pipeBox.isEmpty()) {
-			return;
-		}
+		for(int i = 0; i < pipeBox.length(); i++) {
+			Pipe pipe = pipeBox.getPipe(i);
+			int size = pipeBox.getSize(i);
+			Dir flow = pipe.flow(from);
 
-		for(Pipe pipe : pipeBox) {
-			if(pipe.canFlow(from) && pipeBox.get(pipe) > 0) {
-				pipeBox.remove(pipe);
+			if(flow != null && size > 0) {
+				pipeBox.removePipe(i);
 				board.putPipe(pipe, point);
 				currentPath.push(pipe);
 
-				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from).opposite(), currentPath, longestPath);
+				backtrackingRec(Board.getNext(point, pipe.flow(from)), pipe.flow(from), currentPath, longestPath);
+				Board.getPrevious(point, pipe.flow(from));
+
+				if(bestSolution(longestPath)) {
+					return;
+				}
 
 				currentPath.pop();
 				board.removePipe(point);
-				pipeBox.add(pipe);
-
-				if(bestSolution(longestPath)) {
-					System.out.println("Ya no puede haber mejores soluciones");
-					return;
-				}
+				pipeBox.addPipe(i);
 			}
 		}
 
 	}
 
 	private boolean bestSolution(Deque<Pipe> longestPath) {
-		return longestPath.size() == longestPathSize;
+		return longestPath.size() == pipeBox.getLongestPossible();
 	}
 
 	private <T> void copyDeque(Deque<T> from, Deque<T> to) { // TODO: Better way?
-		to.clear();
+		while(!to.isEmpty()) {
+			to.pop();
+		}
 
-		for (T aux : from) {
+		for(T aux : from) {
 			to.add(aux);
 		}
 	}
