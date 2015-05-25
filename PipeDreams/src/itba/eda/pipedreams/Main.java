@@ -32,7 +32,7 @@ public class Main extends Application {
 		mainStage.setOnCloseRequest(event -> System.exit(0));
 
 		mainPane = new HBox();
-		boardPane = new BoardPane();
+		//boardPane = new BoardPane();
 
 		mainPane.getChildren().addAll(boardPane);
 		mainScene = new Scene(mainPane);
