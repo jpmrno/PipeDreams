@@ -1,4 +1,4 @@
-package itba.eda.pipedreams;
+package itba.eda.pipedreams.solver;
 
 public enum Method {
 	APROX,

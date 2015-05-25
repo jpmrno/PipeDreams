@@ -1,26 +1,26 @@
-package itba.eda.pipedreams.board;
+package itba.eda.pipedreams.solver.board;
 
-import itba.eda.pipedreams.pipe.Pipe;
+import itba.eda.pipedreams.solver.pipe.Pipe;
 
-public class Board {
+public class Board implements BasicBoard {
 
 	private Tile[][] board;
 	private Point startPoint;
 	private Dir startFlow;
 
-	public Board(int rows, int columns, String[] tiles) {
-		board = new Tile[rows][columns];
+	public Board(String[] tiles) {
+		board = new Tile[tiles.length][tiles[0].length()];
 
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[0].length(); j++) {
 				if(setPiece(tiles[i].charAt(j), i, j) == null) {
-					throw new IllegalArgumentException("Invalid board.");
+					throw new IllegalArgumentException("Invalid board. Too many starting points or invalid tile.");
 				}
 			}
 		}
 
 		if(startPoint == null) {
-			throw new IllegalArgumentException("Invalid board.");
+			throw new IllegalArgumentException("Invalid board. No starting point.");
 		}
 	}
 
@@ -53,10 +53,12 @@ public class Board {
 		return piece;
 	}
 
+	@Override
 	public Pipe getPipe(Point point) {
 		return board[point.getRow()][point.getColumn()].pipe;
 	}
 
+	@Override
 	public boolean putPipe(Pipe pipe, Point point) {
 		if(isEmpty(point)) { // TODO: Remove check?
 			board[point.getRow()][point.getColumn()] = Tile.get(pipe);
@@ -65,6 +67,7 @@ public class Board {
 		return false;
 	}
 
+	@Override
 	public boolean removePipe(Point point) {
 		if(hasPipe(point)) {
 			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
@@ -102,28 +105,34 @@ public class Board {
 		return getNext(point, dir.opposite());
 	}
 
+	@Override
 	public boolean isEmpty(Point point) {
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
 	}
 
+	@Override
 	public boolean hasPipe(Point point) {
 		return board[point.getRow()][point.getColumn()].getPipe() != null;
 	}
 
+	@Override
 	public boolean isBlocked(Point point, Dir from) {
 		Tile tile = board[point.getRow()][point.getColumn()];
 
 		return tile != Tile.EMPTY && (tile.pipe == null || tile.pipe.flow(from) == null);
 	}
 
+	@Override
 	public boolean withinLimits(Point point) {
 		return point.getRow() >= 0 && point.getRow() < board.length && point.getColumn() >= 0 && point.getColumn() < board[0].length;
 	}
 
+	@Override
 	public Point getStartPoint() {
 		return startPoint;
 	}
 
+	@Override
 	public Dir getStartFlow() {
 		return startFlow;
 	}
@@ -149,7 +158,22 @@ public class Board {
 		}
 	}
 
-	public static enum Tile {
+	@Override
+	public int getRowSize() {
+		return board.length;
+	}
+
+	@Override
+	public int getColumnSize() {
+		return board[0].length;
+	}
+
+	@Override
+	public String getRepresentation(Point point) {
+		return board[point.getRow()][point.getColumn()].toString();
+	}
+
+	private static enum Tile {
 		L1("1", Pipe.L1),
 		L2("2", Pipe.L2),
 		L3("3", Pipe.L3),

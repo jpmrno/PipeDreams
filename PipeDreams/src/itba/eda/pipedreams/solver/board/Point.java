@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.board;
+package itba.eda.pipedreams.solver.board;
 
 public class Point {
     private int row;

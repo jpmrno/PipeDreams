@@ -1,36 +1,29 @@
-package itba.eda.pipedreams.engine;
+package itba.eda.pipedreams.solver.engine;
 
-import itba.eda.pipedreams.Method;
-import itba.eda.pipedreams.pipe.Pipe;
-import itba.eda.pipedreams.pipe.PipeBox;
-import itba.eda.pipedreams.board.Board;
-import itba.eda.pipedreams.board.Dir;
-import itba.eda.pipedreams.board.Point;
+import itba.eda.pipedreams.solver.Method;
+import itba.eda.pipedreams.solver.board.BasicBoard;
+import itba.eda.pipedreams.solver.pipe.Pipe;
+import itba.eda.pipedreams.solver.pipe.PipeBox;
+import itba.eda.pipedreams.solver.board.Board;
+import itba.eda.pipedreams.solver.board.Dir;
+import itba.eda.pipedreams.solver.board.Point;
 
 import java.util.*;
 
 public class Engine {
 
-	private Board board;
+	private BasicBoard board;
 	private Method method;
 	private long time;
 	private PipeBox pipeBox;
 
 	private boolean iterative;
 
-	public Engine(Board board, Method method, int[] sizes) {
-		this.board = board;
-		this.method = method;
-		//this.pipeBox = new EnumMap<Pipe, Integer>(Pipe.class);
-		pipeBox = new PipeBox(sizes);
-	}
-
-	public Engine(Board board, Method method, int time, int[] sizes) {
+	public Engine(BasicBoard board, Method method, int time, PipeBox pipeBox) {
 		this.board = board;
 		this.method = method;
 		this.time = Timer.convertToMiliseconds(time);
-		//this.pipeBox = new EnumMap<Pipe, Integer>(Pipe.class);
-		pipeBox = new PipeBox(sizes);
+		this.pipeBox = pipeBox;
 	}
 
 	public void start() {
@@ -71,13 +64,15 @@ public class Engine {
 	}
 
 	private Deque<Pipe> findBestNeighbor(Deque<Pipe> currSolution) {
-		Deque<Point> bestNeighbor = new LinkedList<Point>();
+//		Deque<Point> bestNeighbor = new LinkedList<Point>();
+//
+//		for(Point currPos : currSolution) {
+//			if(Solution.isApplicable(board, currPos)) {
+//				setPossibleSolution(board, currPos);
+//			}
+//		}
 
-		for(Point currPos : currSolution) {
-			if(Solution.isApplicable(board, currPos)) {
-				setPossibleSolution(board, currPos);
-			}
-		}
+		return null;
 	}
 
 	private void backtracking() {
@@ -91,7 +86,7 @@ public class Engine {
 			backtrackingRec(Board.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
 			System.out.println(board);
 		}
-		timer.stopClock(); //TODO Preguntar si deberia ir en start
+		timer.stopClock(); //TODO Preguntar si deberia ir en start()
 	}
 
 	private void backtrackingRec(Point point, Dir to, Deque<Pipe> currentPath, Deque<Pipe> longestPath) {
@@ -125,7 +120,7 @@ public class Engine {
 			Dir flow = pipe.flow(from);
 
 			if(flow != null && size > 0) {
-				pipeBox.removePipe(i);
+				pipeBox.removeOnePipe(i);
 				board.putPipe(pipe, point);
 				currentPath.push(pipe);
 
@@ -138,7 +133,7 @@ public class Engine {
 
 				currentPath.pop();
 				board.removePipe(point);
-				pipeBox.addPipe(i);
+				pipeBox.addOnePipe(i);
 			}
 		}
 
@@ -178,7 +173,7 @@ public class Engine {
 			Dir flow = pipe.flow(from);
 
 			if(flow != null && size > 0) {
-				pipeBox.removePipe(i);
+				pipeBox.removeOnePipe(i);
 				board.putPipe(pipe, point);
 				currentPath.push(pipe);
 
@@ -189,7 +184,7 @@ public class Engine {
 
 				currentPath.pop();
 				board.removePipe(point);
-				pipeBox.addPipe(i);
+				pipeBox.addOnePipe(i);
 			}
 		}
 		return false;
