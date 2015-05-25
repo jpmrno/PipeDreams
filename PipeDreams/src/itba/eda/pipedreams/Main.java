@@ -1,6 +1,7 @@
 package itba.eda.pipedreams;
 
 import itba.eda.pipedreams.solver.PDSolverArguments;
+import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.uielements.BoardPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -32,7 +33,7 @@ public class Main extends Application {
 		mainStage.setOnCloseRequest(event -> System.exit(0));
 
 		mainPane = new HBox();
-		//boardPane = new BoardPane();
+		boardPane = new BoardPane(new Board(arguments.getBoardFile()));
 
 		mainPane.getChildren().addAll(boardPane);
 		mainScene = new Scene(mainPane);
