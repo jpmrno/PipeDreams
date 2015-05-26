@@ -1,7 +1,7 @@
 package itba.eda.pipedreams.solver.engine;
 
-public class Solution {
-//	public static boolean isApplicable(Board board, Point point) {
-//
-//	}
+public interface Solution {
+	boolean isApplicable(BasicBoard board, Point point);
+
+	void applySolution(BasicBoard board, Point point);
 }
