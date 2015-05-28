@@ -1,8 +1,12 @@
 package itba.eda.pipedreams.solver.board;
 
+import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
-public class Board implements BasicBoard {
+import java.util.Deque;
+import java.util.Observable;
+
+public class Board extends Observable implements BasicBoard {
 
 	private Tile[][] board;
 	private Point startPoint;
@@ -14,7 +18,7 @@ public class Board implements BasicBoard {
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[0].length(); j++) {
 				if(setPiece(tiles[i].charAt(j), i, j) == null) {
-					throw new IllegalArgumentException("Invalid board. Too many starting points or invalid tile.");
+					throw new IllegalArgumentException("Invalid board. Too many starting points or has invalid tile.");
 				}
 			}
 		}
@@ -62,6 +66,8 @@ public class Board implements BasicBoard {
 	public boolean putPipe(Pipe pipe, Point point) {
 		if(isEmpty(point)) { // TODO: Remove check?
 			board[point.getRow()][point.getColumn()] = Tile.get(pipe);
+			setChanged();
+			return true;
 		}
 
 		return false;
@@ -71,38 +77,11 @@ public class Board implements BasicBoard {
 	public boolean removePipe(Point point) {
 		if(hasPipe(point)) {
 			board[point.getRow()][point.getColumn()] = Tile.EMPTY;
+			setChanged();
 			return true;
 		}
 
 		return false;
-	}
-
-	public static Point getNext(Point point, Dir dir) {
-		int row = point.getRow();
-		int column = point.getColumn();
-
-		switch(dir) {
-			case NORTH:
-				point.setRow(row - 1);
-				break;
-			case SOUTH:
-				point.setRow(row + 1);
-				break;
-			case WEST:
-				point.setColumn(column - 1);
-				break;
-			case EAST:
-				point.setColumn(column + 1);
-				break;
-			default:
-				throw new IllegalStateException();
-		}
-
-		return point;
-	}
-
-	public static Point getPrevious(Point point, Dir dir) {
-		return getNext(point, dir.opposite());
 	}
 
 	@Override
@@ -129,7 +108,7 @@ public class Board implements BasicBoard {
 
 	@Override
 	public Point getStartPoint() {
-		return startPoint;
+		return startPoint.clone();
 	}
 
 	@Override
@@ -159,18 +138,29 @@ public class Board implements BasicBoard {
 	}
 
 	@Override
-	public int getRowSize() {
-		return board.length;
-	}
-
-	@Override
-	public int getColumnSize() {
-		return board[0].length;
-	}
-
-	@Override
 	public String getRepresentation(Point point) {
 		return board[point.getRow()][point.getColumn()].toString();
+	}
+
+	public boolean draw(Deque<Pipe> pipes) {
+		if(pipes == null || pipes.size() == 0) {
+			return false;
+		}
+
+		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
+		Dir flow = startFlow;
+
+		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
+			flow = flow.opposite();
+			Tile tile = Tile.get(pipes.removeLast());
+			board[point.getRow()][point.getColumn()] = tile;
+			flow = tile.getPipe().flow(flow);
+			point = BasicBoard.getNext(point, flow);
+		}
+
+		setChanged();
+
+		return true;
 	}
 
 	private static enum Tile {
@@ -230,5 +220,4 @@ public class Board implements BasicBoard {
 			}
 		}
 	}
-
 }

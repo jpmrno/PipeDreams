@@ -1,4 +1,6 @@
-package itba.eda.pipedreams.solver;
+package itba.eda.pipedreams.solver.basic;
+
+import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -6,8 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class PDSolverArguments { // TODO: Static?
-	private static final int ELEMS = 7; // TODO: Read from backend
+public class PDSolverArgs { // TODO: Static?
+	private static final int ELEMS = Pipe.values().length;
 
 	private Method method;
 	private int approxTime;
@@ -20,8 +22,8 @@ public class PDSolverArguments { // TODO: Static?
 
 	private int[] pipes; // TODO: List<Integer> items = Collections.unmodifiableList(Arrays.asList(0,1,2,3));
 
-	public PDSolverArguments(String[] args) { // TODO: OK?
-		if(args.length < 2 || args.length > 5) {
+	public PDSolverArgs(String[] args) { // TODO: OK?
+		if(args.length < 2 || args.length > 4) {
 			throw new IllegalArgumentException("Invalid number of arguments [2-4].");
 		}
 
@@ -41,11 +43,11 @@ public class PDSolverArguments { // TODO: Static?
 			}
 		}
 
-		if(i < args.length && !hasProgress(args[i++])) {
-			throw new IllegalArgumentException("Invalid argument: " + args[i - 1] + ".");
+		if(i < args.length && !hasProgress(args[i])) {
+			throw new IllegalArgumentException("Invalid argument: " + args[i] + ".");
 		}
 
-		if(i < args.length) {
+		if(++i < args.length) {
 			throw new IllegalArgumentException("Invalid arguments.");
 		}
 
@@ -55,7 +57,7 @@ public class PDSolverArguments { // TODO: Static?
 		} catch(FileNotFoundException e) {
 			throw new IllegalArgumentException("File not found.");
 		} catch(IOException e) {
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("Error while loading file.");
 		} catch(IllegalArgumentException e) {
 			throw new IllegalArgumentException("Invalid file format.");
 		}
@@ -79,6 +81,14 @@ public class PDSolverArguments { // TODO: Static?
 
 	public int[] getPipeSizes() {
 		return pipes;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public int getRows() {
+		return rows;
 	}
 
 	private boolean getMethod(String methodString) {
@@ -109,6 +119,7 @@ public class PDSolverArguments { // TODO: Static?
 	private boolean hasProgress(String arg) {
 		if(arg.equalsIgnoreCase("progress")) {
 			progress = true;
+			return true;
 		}
 
 		return false;

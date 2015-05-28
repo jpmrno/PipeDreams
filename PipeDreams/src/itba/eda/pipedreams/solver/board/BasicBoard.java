@@ -1,6 +1,7 @@
 package itba.eda.pipedreams.solver.board;
 
-import itba.eda.pipedreams.solver.GameBoard;
+import itba.eda.pipedreams.solver.basic.GameBoard;
+import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 public interface BasicBoard extends GameBoard {
