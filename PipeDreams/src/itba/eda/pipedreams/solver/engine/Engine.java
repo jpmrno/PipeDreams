@@ -1,5 +1,6 @@
 package itba.eda.pipedreams.solver.engine;
 
+import itba.eda.pipedreams.solver.basic.BoardDisplay;
 import itba.eda.pipedreams.solver.basic.Method;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.pipe.Pipe;
@@ -7,11 +8,12 @@ import itba.eda.pipedreams.solver.pipe.PipeBox;
 import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.board.Dir;
 import itba.eda.pipedreams.solver.basic.Point;
+import javafx.application.Platform;
 
 import java.util.*;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 100;
+	private static final int DELAY = 500;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -21,6 +23,11 @@ public class Engine implements Runnable {
 	private boolean withProgress;
 	private boolean iterative;
 
+
+	BoardDisplay display;
+
+
+
 	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox) {
 		this.board = board;
 		this.method = method;
@@ -28,6 +35,24 @@ public class Engine implements Runnable {
 		this.time = Timer.convertToMiliseconds(time);
 		this.pipeBox = pipeBox;
 	}
+
+
+
+
+
+
+	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox, BoardDisplay display) {
+		this.board = board;
+		this.method = method;
+		this.withProgress = withProgress;
+		this.time = Timer.convertToMiliseconds(time);
+		this.pipeBox = pipeBox;
+		this.display = display;
+	}
+
+
+
+
 
 	@Override
 	public void run() {
@@ -60,6 +85,7 @@ public class Engine implements Runnable {
 
 		while(timer.getRunningTime() < time) {
 			currSolution = findBestNeighbor(currSolution);
+
 			if(currSolution.size() > bestSolution.size()) { // TODO: currSolution can be null!
 				copyQueue(currSolution, bestSolution);
 			} else {
@@ -108,6 +134,7 @@ public class Engine implements Runnable {
 		}
 
 		if(!board.withinLimits(point)) {
+			Platform.runLater(display::saveAsPng);
 			if(currentPath.size() > longestPath.size()) {
 				copyQueue(currentPath, longestPath);
 			}

@@ -5,13 +5,21 @@ import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 
 public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make this a Canvas & put in a ScrollPane
+	private int i = 0;
+
 	private final int rows;
 	private final int columns;
 	private GameBoard board;
@@ -21,6 +29,8 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 
 		this.rows = rows;
 		this.columns = columns;
+
+		this.snapshot(new SnapshotParameters(), new WritableImage(200, 200));
 	}
 
 	private void paint() {
@@ -50,6 +60,22 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 
 		this.board = board;
 		paint();
+	}
+
+	public void saveAsPng() {
+
+		System.out.println("ENTRE");
+
+		WritableImage image = this.snapshot(new SnapshotParameters(), null);
+
+		// TODO: probably use a file chooser here
+		File file = new File("imgs/chart" + i++ + ".png");
+
+		try {
+			ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+		} catch (IOException e) {
+			System.out.println("ERROR FEO");
+		}
 	}
 
 	@Override
@@ -120,16 +146,3 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 	}
 
 }
-
-//	public void paint(Board board) {
-//		Point point = new Point(0, 0);
-//		GraphicsContext gc = pane.getGraphicsContext2D();
-//
-//		for(int row = 0; row < rows; row++) {
-//			for(int column = 0; column < columns; column++) {
-//				point.setRow(row);
-//				point.setColumn(column);
-//				gc.drawImage(GameTile.fromString(board.getRepresentation(point)), column * 50, row * 50);
-//			}
-//		}
-//	}
