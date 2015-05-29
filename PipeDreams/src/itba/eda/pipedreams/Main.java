@@ -41,6 +41,10 @@ public class Main extends Application {
 		mainStage.setScene(mainScene);
 		primaryStage.show();
 
+		while(!primaryStage.isShowing()) {
+			;
+		}
+
 		solver.start();
 	}
 }

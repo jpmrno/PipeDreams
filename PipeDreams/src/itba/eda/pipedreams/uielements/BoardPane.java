@@ -6,6 +6,7 @@ import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -63,13 +64,19 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 	}
 
 	public void saveAsPng() {
+		if(i++ % 2 == 1) {
+			return;
+		}
 
 		System.out.println("ENTRE");
 
-		WritableImage image = this.snapshot(new SnapshotParameters(), null);
+		SnapshotParameters parameters = new SnapshotParameters();
+		parameters.setViewport(new Rectangle2D(50, 50, 100, 100));
+
+		WritableImage image = this.snapshot(parameters, null);
 
 		// TODO: probably use a file chooser here
-		File file = new File("imgs/chart" + i++ + ".png");
+		File file = new File("imgs/chart" + i + ".png");
 
 		try {
 			ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);

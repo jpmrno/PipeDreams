@@ -13,7 +13,7 @@ import javafx.application.Platform;
 import java.util.*;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 500;
+	private static final int DELAY = 1000;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -25,7 +25,6 @@ public class Engine implements Runnable {
 
 
 	BoardDisplay display;
-
 
 
 	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox) {
@@ -128,13 +127,12 @@ public class Engine implements Runnable {
 	private void backtrackingRec(Point point, Dir to, Deque<Pipe> currentPath, Deque<Pipe> longestPath) throws InterruptedException {
 		Dir from = to.opposite();
 
-		if(withProgress) { // TODO: OK here?
-			board.notifyObservers();
-			Thread.sleep(DELAY);
-		}
-
 		if(!board.withinLimits(point)) {
-			Platform.runLater(display::saveAsPng);
+			if(withProgress) { // TODO: OK here?
+				board.notifyObservers();
+				Platform.runLater(display::saveAsPng);
+				Thread.sleep(DELAY);
+			}
 			if(currentPath.size() > longestPath.size()) {
 				copyQueue(currentPath, longestPath);
 			}
