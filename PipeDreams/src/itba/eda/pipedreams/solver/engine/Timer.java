@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.enginelogic;
+package itba.eda.pipedreams.solver.engine;
 
 public class Timer {
 	private long runningTime;
@@ -12,6 +12,7 @@ public class Timer {
 	
 	public void startClock() {
 		if(!isRunning) {
+			System.out.println("Timer started");
 			runningTime = System.currentTimeMillis();
 			isRunning = true;
 		} else {
@@ -20,8 +21,11 @@ public class Timer {
 	}
 	
 	public void stopClock(){
-		runningTime = System.currentTimeMillis() - runningTime;
-		isRunning = false;
+		if(isRunning) {
+			runningTime = System.currentTimeMillis() - runningTime;
+			isRunning = false;
+			printRunningTime();
+		}
 	}
 
 	public long getRunningTime() {
@@ -34,9 +38,13 @@ public class Timer {
 
 	public void printRunningTime() {
 		if(isRunning) {
-			System.out.println("Running time is: " + runningTime + "ms");
+			System.out.println("Running time is: " + (System.currentTimeMillis() - runningTime) / 1000 + "s");
 		} else {
-			System.out.println("Running time was: " + runningTime + "ms");
+			System.out.println("Running time was: " + runningTime / 1000 + "s");
 		}
+	}
+
+	public static long convertToMiliseconds(int min) {
+		return min * 60 * 1000;
 	}
 }
