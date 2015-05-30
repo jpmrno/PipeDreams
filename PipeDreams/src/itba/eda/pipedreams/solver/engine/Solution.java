@@ -14,6 +14,7 @@ import java.util.LinkedList;
 public class Solution implements Iterable<Pipe> {
 	private Deque<Pipe> solution;
 	private int[] aux;
+    private boolean bestSol;
 
 	public Solution() {
 		solution = new LinkedList<>();
@@ -90,6 +91,18 @@ public class Solution implements Iterable<Pipe> {
         for(int i=0; i < aux.length; i++) {
             aux[i] = pipebox.getSize(i);
         }
+    }
+
+    public void removePipe(Pipe pipe) {
+        aux[pipe.ordinal()]--;
+    }
+
+    public boolean hasPipe(Pipe pipe) {
+        return aux[pipe.ordinal()] > 0;
+    }
+
+    public void addPipe(Pipe pipe) {
+        aux[pipe.ordinal()]++;
     }
 
 	@Override

@@ -22,7 +22,6 @@ public class Engine implements Runnable {
 	private PipeBox pipeBox; // TODO: Interfaces?
 
 	private boolean withProgress;
-	private boolean iterative;
 
 	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox) {
 		this.board = board;
@@ -54,16 +53,13 @@ public class Engine implements Runnable {
 
 	private void backtracking() throws InterruptedException {
 		Timer timer = new Timer();
-		timer.startClock();
-		if(iterative) {
+        timer.startClock();
 
-		} else {
-			Deque<Pipe> longestPath = new LinkedList<Pipe>();
-			Deque<Pipe> currPath = new LinkedList<Pipe>();
-			backtrackingRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
-			board.draw(longestPath);
-			board.notifyObservers();
-		}
+        Deque<Pipe> longestPath = new LinkedList<Pipe>();
+        Deque<Pipe> currPath = new LinkedList<Pipe>();
+        backtrackingRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
+        board.draw(longestPath);
+        board.notifyObservers();
 
 		timer.stopClock(); //TODO Preguntar si deberia ir en start()
 	}
