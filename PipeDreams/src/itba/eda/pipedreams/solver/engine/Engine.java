@@ -43,8 +43,12 @@ public class Engine implements Runnable {
 				}
 				break;
 			case APROX:
-				hillClimbing();
-				break;
+                try {
+                    hillClimbing();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
 		}
 	}
 
@@ -179,7 +183,7 @@ public class Engine implements Runnable {
 
 
 
-    private void hillClimbing() { // TODO: Add notifies!
+    private void hillClimbing() throws InterruptedException { // TODO: Add notifies!
         time = 1000*60;
         Solution currSol = new Solution(), bestSol;
         Timer t = new Timer();
@@ -189,6 +193,11 @@ public class Engine implements Runnable {
             return;
         }
 
+        if(withProgress) { // TODO: OK here?
+            board.notifyObservers();
+            Thread.sleep(DELAY);
+        }
+
         bestSol = currSol.cloneSol();
         while(t.getRunningTime() < time) {
             currSol = findBestNeighbor(currSol);
@@ -196,6 +205,10 @@ public class Engine implements Runnable {
             if(currSol != null) {
                 bestSol = currSol.cloneSol();
                 bestSol.cloneSol().applySolution(board);
+                if(withProgress) { // TODO: OK here?
+                    board.notifyObservers();
+                    Thread.sleep(DELAY);
+                }
                 System.out.println("DEBUG> AuxPipeBox: " + bestSol.getAuxPipeBox());
                 pipeBox = new PipeBox(bestSol.getAuxPipeBox()); //TODO: Arreglar
             } else {
@@ -217,7 +230,7 @@ public class Engine implements Runnable {
 
         while(it.hasNext() && !noBetterSol) {
             currPipe = it.next();
-            Solution sol = getHeuristicSol(currPoint, currSol, counter);
+            Solution sol = getHeuristicSol(currPoint, currSol, counter, currFlow.opposite());
 
             int bestSolLength = bestSol == null? 0 : bestSol.size();
             if(sol != null && sol.size() > bestSolLength) {
@@ -237,7 +250,7 @@ public class Engine implements Runnable {
         return bestSol;
     }
 
-    private Solution getHeuristicSol(Point p, Solution s, int counter) {
+    private Solution getHeuristicSol(Point p, Solution s, int counter, Dir from) {
         Pipe pipe = board.getPipe(p);
         Iterator<Pipe> it = s.iterator();
         Solution sol = new Solution();
@@ -249,7 +262,7 @@ public class Engine implements Runnable {
             counter--;
         }
 
-        int skip = Heuristics.getHeuristic(board, p, sol, pipeBox);
+        int skip = Heuristics.getHeuristic(board, p, sol, pipeBox, from);
 		while(skip != 0) {
 			it.next();
 			skip--;
