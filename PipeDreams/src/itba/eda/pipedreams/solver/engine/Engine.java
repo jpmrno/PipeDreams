@@ -253,31 +253,16 @@ public class Engine implements Runnable {
             counter--;
         }
 
-        switch(pipe) {
-            case L1:
-                if(pipeBox.getSize(Pipe.CROSS.ordinal()) > 0 && pipeBox.getSize(Pipe.L4.ordinal()) > 0 && pipeBox.getSize(Pipe.L2.ordinal()) > 0) {
-                    if(board.isEmpty(new Point(p.getRow() + 1, p.getColumn())) && board.isEmpty(new Point(p.getRow(), p.getColumn() + 1))
-                            && board.isEmpty(new Point(p.getRow() + 1, p.getColumn() + 1))) {
-                        it.next();
-                        sol.push(Pipe.CROSS);
-                        sol.getAuxPipeBox()[Pipe.CROSS.ordinal()]--;
-                        sol.push(Pipe.L4);
-                        sol.getAuxPipeBox()[Pipe.L4.ordinal()]--;
-                        sol.push(Pipe.L1);
-                        sol.push(Pipe.L2);
-                        sol.getAuxPipeBox()[Pipe.L2.ordinal()]--;
-                        sol.push(Pipe.CROSS);
+        int skip = Heuristics.getHeuristic(board, p, sol, pipeBox);
+		while(skip != 0) {
+			it.next();
+			skip--;
+		}
 
-                    }
-                    break;
-                }
-            default:
-                break;
-
-        }
         while(it.hasNext()) {
            sol.push(it.next());
         }
+
         return sol;
     }
 
