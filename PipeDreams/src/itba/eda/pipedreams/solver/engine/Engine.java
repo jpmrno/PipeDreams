@@ -1,19 +1,17 @@
 package itba.eda.pipedreams.solver.engine;
 
-import itba.eda.pipedreams.solver.basic.BoardDisplay;
 import itba.eda.pipedreams.solver.basic.Method;
+import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
-import itba.eda.pipedreams.solver.pipe.Pipe;
-import itba.eda.pipedreams.solver.pipe.PipeBox;
 import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.board.Dir;
-import itba.eda.pipedreams.solver.basic.Point;
-import javafx.application.Platform;
-import sun.awt.image.MultiResolutionCachedImage;
+import itba.eda.pipedreams.solver.pipe.Pipe;
+import itba.eda.pipedreams.solver.pipe.PipeBox;
 
-import java.util.*;
-
-import static itba.eda.pipedreams.solver.board.Board.*;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Engine implements Runnable {
 	private static final int DELAY = 1000;
@@ -26,10 +24,6 @@ public class Engine implements Runnable {
 	private boolean withProgress;
 	private boolean iterative;
 
-
-	BoardDisplay display;
-
-
 	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox) {
 		this.board = board;
 		this.method = method;
@@ -37,24 +31,6 @@ public class Engine implements Runnable {
 		this.time = Timer.convertToMiliseconds(time);
 		this.pipeBox = pipeBox;
 	}
-
-
-
-
-
-
-	public Engine(Board board, Method method, int time, boolean withProgress, PipeBox pipeBox, BoardDisplay display) {
-		this.board = board;
-		this.method = method;
-		this.withProgress = withProgress;
-		this.time = Timer.convertToMiliseconds(time);
-		this.pipeBox = pipeBox;
-		this.display = display;
-	}
-
-
-
-
 
 	@Override
 	public void run() {
@@ -95,12 +71,12 @@ public class Engine implements Runnable {
 	private void backtrackingRec(Point point, Dir to, Deque<Pipe> currentPath, Deque<Pipe> longestPath) throws InterruptedException {
 		Dir from = to.opposite();
 
+		if(withProgress) { // TODO: OK here?
+			board.notifyObservers();
+			Thread.sleep(DELAY);
+		}
+
 		if(!board.withinLimits(point)) {
-			if(withProgress) { // TODO: OK here?
-				board.notifyObservers();
-				Platform.runLater(display::saveAsPng);
-				Thread.sleep(DELAY);
-			}
 			if(currentPath.size() > longestPath.size()) {
 				copyQueue(currentPath, longestPath);
 			}

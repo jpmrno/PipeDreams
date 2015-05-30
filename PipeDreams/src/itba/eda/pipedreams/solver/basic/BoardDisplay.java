@@ -6,5 +6,4 @@ import java.util.Observer;
 
 public interface BoardDisplay extends Observer {
 	void setBoard(BasicBoard board);
-	void saveAsPng();
 }
