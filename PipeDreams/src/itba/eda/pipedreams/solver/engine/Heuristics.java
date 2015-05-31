@@ -19,7 +19,7 @@ public enum Heuristics implements Heuristic {
         public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             if (board.isEmpty(p.goS()) && board.isEmpty(p.goE()) && board.isEmpty(p.goSE())) { //EL MEJOR CASO
                 if (pipeBox.hasPipe(Pipe.CROSS) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.L2)) {
-                    Iterator<Pipe> it = from == Dir.WEST ? replace.descendingIterator() : replace.iterator();
+                    Iterator<Pipe> it = from == Dir.WEST ? replace.iterator() : replace.descendingIterator();
                     while(it.hasNext()) {
                         sol.add(it.next());
                     }
