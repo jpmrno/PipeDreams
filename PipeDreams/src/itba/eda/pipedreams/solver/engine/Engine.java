@@ -9,12 +9,11 @@ import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
 
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 200;
+	private static final int DELAY = 400;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;

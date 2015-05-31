@@ -176,17 +176,16 @@ public class Board extends Observable implements BasicBoard {
 
 		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
 		Dir flow = startFlow;
-        for(Pipe pipe : pipes) {
-            System.out.print(pipe + " ");
-        }
-        System.out.println();
+        System.out.print("Drawing: ");
 		for(Pipe pipe : pipes) {
+            System.out.print(pipe + " - ");
 			flow = flow.opposite();
 			Tile tile = Tile.get(pipe);
 			board[point.getRow()][point.getColumn()] = tile;
-			flow = tile.getPipe().flow(flow);
+			flow = pipe.flow(flow);
 			point = BasicBoard.getNext(point, flow);
 		}
+        System.out.println();
 
 		setChanged();
 		return true;

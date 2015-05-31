@@ -212,22 +212,34 @@ public enum Heuristics implements Heuristic {
                     boolean hasPipes = pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.L4);
                     if (hasPipes) {
                         Iterator<Pipe> it = null;
-                        if (from == Dir.WEST) {
+                        if (from == Dir.WEST) { //TODO: DE ESTA MANERA PUEDE PISAR LA SOL ANTERIOR, NO SE POR QUE
+                            System.out.println("West");
                             if (board.isEmpty(p.goN()) && board.isEmpty(p.goNE())) {
                                 it = replace.iterator(); //L1 L3 L4 L2
+                                while (it.hasNext()) {
+                                    sol.add(it.next());
+                                }
                             } else if (board.isEmpty(p.goS()) && board.isEmpty(p.goSE())) {
                                 it = replace2.iterator(); //L4 L2 L1 L3
+                                while (it.hasNext()) {
+                                    sol.add(it.next());
+                                }
                             }
                         } else { //from == Dir.EAST
+                            System.out.println("East");
                             if (board.isEmpty(p.goN()) && board.isEmpty(p.goNW())) {
                                 it = replace.descendingIterator(); //L2 L4 L3 L1
+                                while (it.hasNext()) {
+                                    sol.add(it.next());
+                                }
                             } else if (board.isEmpty(p.goS()) && board.isEmpty(p.goSW())) {
                                 it = replace2.descendingIterator(); //L3 L1 L2 L4
+                                while (it.hasNext()) {
+                                    sol.add(it.next());
+                                }
                             }
                         }
-                        while (it.hasNext()) { //TODO: A veces devuelve null pointer exception
-                            sol.add(it.next());
-                        }
+
 
                         return 2;
                     }
