@@ -48,14 +48,14 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 
 			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution); //TODO: Ver si clonar aca esta bien
             ///////////////////////////DEBUG
-            System.out.print("VECINO " + i + " : ");
+            System.out.print("VECINO DE " + pipe + " : ");
             for(Pipe each : solution) {
                 System.out.print(each + " ");
             }
             System.out.println();
             ///////////////////////////DEBUG
-            System.out.println(solution.size() - skip);
-            System.out.println(prevSolution.size() - prevSkip);
+            System.out.println("PREV PARTIAL SOL. SIZE: " + (solution.size() - skip));
+            System.out.println("CURR PARTIAL SOL. SIZE: " + (prevSolution.size() - prevSkip));
 			if(solution.size() - skip > prevSolution.size() - prevSkip) {
 				prevSkip = skip;
 				prevSolution = solution;
