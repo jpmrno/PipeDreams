@@ -108,6 +108,48 @@ public enum Heuristics implements Heuristic {
             return 0;
         }
     },
+    I1{
+        private Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.L3, Pipe.L1, Pipe.L4, Pipe.L2));
+        private Deque<Pipe> replace2 = new LinkedList<>(Arrays.asList(Pipe.L4, Pipe.L2, Pipe.L3, Pipe.L1));
+        @Override
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
+            if (board.getPipe(BasicBoard.getNext(p, from.opposite())) == Pipe.I1) {
+                boolean hasPipes = pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.L4);
+                if (hasPipes){
+                    if (from == Dir.NORTH){
+                        if (board.isEmpty(p.goE()) && board.isEmpty(p.goSE())) {
+                            Iterator<Pipe> it = replace.iterator();
+                            while (it.hasNext())
+                                sol.add(it.next());
+
+                            return 2;
+                        } else if(board.isEmpty(p.goW()) && board.isEmpty(p.goSW())) {
+                            Iterator<Pipe> it = replace2.iterator();
+                            while(it.hasNext())
+                                sol.add(it.next());
+
+                            return 2;
+                        }
+                    } else { //from == Dir.SOUTH
+                        if (board.isEmpty(p.goE()) && board.isEmpty(p.goNE())) {
+                            Iterator<Pipe> it = replace.descendingIterator();
+                            while (it.hasNext())
+                                sol.add(it.next());
+
+                            return 2;
+                        } else if(board.isEmpty(p.goW()) && board.isEmpty(p.goNW())) {
+                            Iterator<Pipe> it = replace2.descendingIterator();
+                            while(it.hasNext())
+                                sol.add(it.next());
+
+                            return 2;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+    },
     I2 {
         @Override
         public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
