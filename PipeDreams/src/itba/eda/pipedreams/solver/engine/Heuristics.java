@@ -213,35 +213,43 @@ public enum Heuristics implements Heuristic {
                     if (hasPipes) {
                         Iterator<Pipe> it = null;
                         if (from == Dir.WEST) { //TODO: DE ESTA MANERA PUEDE PISAR LA SOL ANTERIOR, NO SE POR QUE
-                            System.out.println("West");
                             if (board.isEmpty(p.goN()) && board.isEmpty(p.goNE())) {
                                 it = replace.iterator(); //L1 L3 L4 L2
                                 while (it.hasNext()) {
-                                    sol.add(it.next());
+                                    Pipe curr = it.next();
+                                    System.out.print(curr);
+                                    sol.add(curr);
+                                    return 2;
                                 }
                             } else if (board.isEmpty(p.goS()) && board.isEmpty(p.goSE())) {
                                 it = replace2.iterator(); //L4 L2 L1 L3
                                 while (it.hasNext()) {
-                                    sol.add(it.next());
+                                    Pipe curr = it.next();
+                                    System.out.print(curr);
+                                    sol.add(curr);
+                                    return 2;
                                 }
                             }
-                        } else { //from == Dir.EAST
-                            System.out.println("East");
+                        } else {
                             if (board.isEmpty(p.goN()) && board.isEmpty(p.goNW())) {
                                 it = replace.descendingIterator(); //L2 L4 L3 L1
                                 while (it.hasNext()) {
-                                    sol.add(it.next());
+                                    Pipe curr = it.next();
+                                    System.out.print(curr);
+                                    sol.add(curr);
+                                    return 2;
                                 }
                             } else if (board.isEmpty(p.goS()) && board.isEmpty(p.goSW())) {
                                 it = replace2.descendingIterator(); //L3 L1 L2 L4
-                                while (it.hasNext()) {
-                                    sol.add(it.next());
-                                }
+                                Pipe curr = it.next();
+                                System.out.print(curr);
+                                sol.add(curr);
+                                return 2;
                             }
+                            System.out.println();
+
                         }
-
-
-                        return 2;
+                        return 0;
                     }
                 } else if(from == Dir.WEST) {
                     if (board.getPipe(next) == Pipe.L1 && board.isEmpty(p.goS()) && board.isEmpty(p.goSE()) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.I1)) {

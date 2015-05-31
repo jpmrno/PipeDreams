@@ -89,7 +89,8 @@ public class Board extends Observable implements BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
-        if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelva falso y no haya que chequear si esta dentro de los limites
+        print();
+        if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelvan falso y no haya que chequear si esta dentro de los limites
             return false;
         }
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
