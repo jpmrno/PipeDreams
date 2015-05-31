@@ -197,8 +197,8 @@ public class Engine implements Runnable {
 
 			if(localSolution == null) {
 				timer.stopClock();
-				System.out.println("No solution found.");
-				return; //TODO: Que hacer cuando no existe la solucion
+				System.out.println("No solution found."); // FIXME: Esta entrando aca... Porque?
+				return; //TODO: Que hacer cuando no existe la solucion?
 			}
 
 			do {
