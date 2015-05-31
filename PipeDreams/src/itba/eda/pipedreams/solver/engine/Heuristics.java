@@ -21,7 +21,6 @@ public enum Heuristics implements Heuristic {
                 if (pipeBox.hasPipe(Pipe.CROSS) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.L2)) {
                     Iterator<Pipe> it = from == Dir.WEST ? replace.descendingIterator() : replace.iterator();
                     while(it.hasNext()) {
-                        it.next();
                         sol.add(it.next());
                     }
                     return 1;
@@ -119,7 +118,7 @@ public enum Heuristics implements Heuristic {
                     if (from == Dir.NORTH){
                         if (board.isEmpty(p.goE()) && board.isEmpty(p.goSE())) {
                             Iterator<Pipe> it = replace.iterator();
-                            while (it.hasNext())
+                            while(it.hasNext())
                                 sol.add(it.next());
 
                             return 2;
@@ -178,6 +177,12 @@ public enum Heuristics implements Heuristic {
             }
             return 0;
         }
+    },
+    CROSS {
+        @Override
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
+            return 0;
+        }
     };
 
     public static int getHeuristic(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -186,6 +191,7 @@ public enum Heuristics implements Heuristic {
     }
 
 	public static int apply(BasicBoard board, Point point, Dir flow, PipeBox pipeBox, GameSolution solution) {
+        System.out.println(point); //TODO: Si la sol. es una fila vertical se saltea dos puntos
 		return values()[board.getPipe(point).ordinal()].apply(board, point, solution, pipeBox, flow);
 	}
 }
