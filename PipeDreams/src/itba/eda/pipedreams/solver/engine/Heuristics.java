@@ -113,6 +113,8 @@ public enum Heuristics implements Heuristic {
         @Override
         public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             Point next = BasicBoard.getNext(p, from.opposite());
+
+            // I1 seguido de I1
             if (board.withinLimits(next) && board.getPipe(next) == Pipe.I1) {
                 boolean hasPipes = pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.L4);
                 if (hasPipes){
@@ -146,6 +148,42 @@ public enum Heuristics implements Heuristic {
                         }
                     }
                 }
+            }
+
+
+            //I1 seguido de algun L
+            Pipe nextpipe = board.getPipe(BasicBoard.getNext(p, from.opposite()));
+
+            //Vengo desde SOUTH
+            if (nextpipe == Pipe.L4 && board.isEmpty(p.goE()) && board.isEmpty(p.goNE()) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.I2)){
+                sol.add(Pipe.L3);
+                sol.add(Pipe.L1);
+                sol.add(Pipe.L4);
+                sol.add(Pipe.I2);
+                return 2;
+            }
+            if (nextpipe == Pipe.L3 && board.isEmpty(p.goW()) && board.isEmpty(p.goNW()) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.I2)){
+                sol.add(Pipe.L4);
+                sol.add(Pipe.L2);
+                sol.add(Pipe.L3);
+                sol.add(Pipe.I2);
+                return 2;
+            }
+
+            //Vengo desde NORTH
+            if (nextpipe == Pipe.L1 && board.isEmpty(p.goE()) && board.isEmpty(p.goSE()) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.I2)){
+                sol.add(Pipe.L2);
+                sol.add(Pipe.L4);
+                sol.add(Pipe.L1);
+                sol.add(Pipe.I2);
+                return 2;
+            }
+            if (nextpipe == Pipe.L2 && board.isEmpty(p.goW()) && board.isEmpty(p.goSW()) && pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.I2)){
+                sol.add(Pipe.L1);
+                sol.add(Pipe.L3);
+                sol.add(Pipe.L2);
+                sol.add(Pipe.I2);
+                return 2;
             }
             return 0;
         }
