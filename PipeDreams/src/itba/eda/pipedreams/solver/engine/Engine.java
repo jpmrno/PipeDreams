@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 1000;
+	private static final int DELAY = 100;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -44,16 +44,13 @@ public class Engine implements Runnable {
 				break;
 			case APROX:
                 try {
-                    hillClimbing();
+                    hill();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 break;
 		}
 	}
-
-
-
 
 	private void backtracking() throws InterruptedException {
 		Timer timer = new Timer();
@@ -181,10 +178,119 @@ public class Engine implements Runnable {
 		return false;
 	}
 
+	private void hill() throws InterruptedException { // TODO: Change name
+		Timer timer = new Timer();
+		timer.startClock();
+
+		GameSolution bestSolution = null;
+		GameSolution localSolution;
+		boolean betterFound;
+
+		while(timer.getRunningTime() < time) {
+			board.clear(); //TODO: Test
+			localSolution = randomSolution();
+
+			if(withProgress) {
+				board.notifyObservers();
+				Thread.sleep(DELAY);
+			}
+
+			if(localSolution == null) {
+				timer.stopClock();
+				System.out.println("No solution found.");
+				return; //TODO: Que hacer cuando no existe la solucion
+			}
+
+			do {
+				betterFound = false;
+				GameSolution solution = localSolution.bestNeighbor(board, pipeBox);
+
+				if(solution.compareTo(localSolution) > 0) {
+					localSolution = solution;
+					betterFound = true;
+
+					board.draw(localSolution);
+
+					if(withProgress) {
+						board.notifyObservers();
+						Thread.sleep(DELAY);
+					}
+				}
+			} while(betterFound && timer.getRunningTime() < time);
+
+			if(bestSolution == null || localSolution.compareTo(bestSolution) > 0) {
+				bestSolution = localSolution;
+			}
+		}
+		timer.stopClock();
+
+		if(bestSolution != null) {
+			board.draw(bestSolution);
+			board.notifyObservers();
+		} else {
+			System.out.println("No solution found.");
+		}
+	}
+
+	private GameSolution randomSolution() {
+		GameSolution solution = new GameSolution();
+		int[] mapPipeBox = PipeBox.shufflePipes();
+
+		if(randomSolutionRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
+			return solution;
+		}
+
+		return null;
+	}
+
+	private boolean randomSolutionRec(Point point, Dir to, GameSolution solution, int[] mapPipeBox) {
+		Dir from = to.opposite();
+
+		if(!board.withinLimits(point)) {
+			return true;
+		}
+
+		if(!board.isEmpty(point)) {
+			if(!board.isBlocked(point, from)) {
+				Pipe pipe = board.getPipe(point);
+				solution.add(pipe);
+
+				randomSolutionRec(BasicBoard.getNext(point, pipe.flow(from)), pipe.flow(from), solution, mapPipeBox);
+				BasicBoard.getPrevious(point, pipe.flow(from));
+
+				solution.remove();
+			}
+			return false;
+		}
+
+		for(int i = 0; i < pipeBox.length(); i++) {
+			Pipe pipe = pipeBox.getPipe(mapPipeBox[i]);
+			int size = pipeBox.getSize(mapPipeBox[i]);
+			Dir flow = pipe.flow(from);
+
+			if(flow != null && size > 0) {
+				pipeBox.removeOnePipe(mapPipeBox[i]);
+				board.putPipe(pipe, point);
+				solution.add(pipe);
+
+				if(randomSolutionRec(BasicBoard.getNext(point, pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
+					return true;
+				}
+				BasicBoard.getPrevious(point, pipe.flow(from));
+
+				solution.remove();
+				board.removePipe(point);
+				pipeBox.addOnePipe(mapPipeBox[i]);
+			}
+		}
+
+		return false;
+	}
+
+
 
 
     private void hillClimbing() throws InterruptedException { // TODO: Add notifies!
-        time = 1000*60;
         Solution currSol = new Solution(), bestSol;
         Timer t = new Timer();
         t.startClock();
@@ -198,7 +304,6 @@ public class Engine implements Runnable {
             Thread.sleep(DELAY);
         }
 
-        bestSol = currSol.cloneSol();
         while(t.getRunningTime() < time) {
             currSol = findBestNeighbor(currSol);
 
@@ -209,10 +314,10 @@ public class Engine implements Runnable {
                     board.notifyObservers();
                     Thread.sleep(DELAY);
                 }
-                System.out.println("DEBUG> AuxPipeBox: " + bestSol.getAuxPipeBox());
                 pipeBox = new PipeBox(bestSol.getAuxPipeBox()); //TODO: Arreglar
             } else {
                 System.out.println("MAXIMO LOCAL");
+				currSol = new Solution();
                 findRandomSolution(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), currSol);
             }
         } //TODO: Aplicar la mejor solucion y retornar
@@ -237,15 +342,10 @@ public class Engine implements Runnable {
                 bestSol = sol;
 
             }
-            System.out.println(currPipe);
             //TODO: Cortar antes si se encuentra una solucion con pipe cruzado
             currPoint = BasicBoard.getNext(currPoint, currPipe.flow(currFlow.opposite()));
             currFlow = currPipe.flow(currFlow.opposite());
             counter++;
-            for(Pipe pipe : bestSol) {
-                System.out.print(pipe + " - ");
-            }
-            System.out.println();
         }
         return bestSol;
     }

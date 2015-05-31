@@ -1,6 +1,7 @@
 package itba.eda.pipedreams.solver.engine;
 
 import itba.eda.pipedreams.solver.basic.Point;
+import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.board.Dir;
 import itba.eda.pipedreams.solver.pipe.Pipe;
@@ -195,4 +196,8 @@ public enum Heuristics implements Heuristic {
     public static int getHeuristic(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
         return values()[board.getPipe(p).ordinal()].apply(board, p, sol, pipeBox, from);
     }
+
+	public static int apply(BasicBoard board, Point point, Dir flow, PipeBox pipeBox, GameSolution solution) {
+		return 0; // TODO: do xD
+	}
 }

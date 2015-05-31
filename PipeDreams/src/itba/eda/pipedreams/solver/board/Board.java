@@ -1,18 +1,21 @@
 package itba.eda.pipedreams.solver.board;
 
 import itba.eda.pipedreams.solver.basic.Point;
+import itba.eda.pipedreams.solver.engine.GameSolution;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.util.Deque;
 import java.util.Observable;
 
 public class Board extends Observable implements BasicBoard {
+	private String[] file;
 
 	private Tile[][] board;
 	private Point startPoint;
 	private Dir startFlow;
 
 	public Board(String[] tiles) {
+		file = tiles.clone();
 		board = new Tile[tiles.length][tiles[0].length()];
 
 		for(int i = 0; i < tiles.length; i++) {
@@ -161,6 +164,33 @@ public class Board extends Observable implements BasicBoard {
 		setChanged();
 
 		return true;
+	}
+
+	public boolean draw(GameSolution pipes) {
+		if(pipes == null || pipes.size() == 0) {
+			return false;
+		}
+
+		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
+		Dir flow = startFlow;
+		for(Pipe pipe : pipes) {
+			flow = flow.opposite();
+			Tile tile = Tile.get(pipe);
+			board[point.getRow()][point.getColumn()] = tile;
+			flow = tile.getPipe().flow(flow);
+			BasicBoard.getNext(point, flow);
+		}
+
+		setChanged();
+		return true;
+	}
+
+	public void clear() {
+		for(int i = 0; i < file.length; i++) {
+			for(int j = 0; j < file[0].length(); j++) {
+				setPiece(file[i].charAt(j), i, j);
+			}
+		}
 	}
 
 	private static enum Tile {
