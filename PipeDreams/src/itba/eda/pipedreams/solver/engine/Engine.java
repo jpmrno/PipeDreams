@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 10;
+	private static final int DELAY = 200;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -192,7 +192,7 @@ public class Engine implements Runnable {
 		int[] mapPipeBox = PipeBox.shufflePipes();
 
         if(randomSolutionRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
-            System.out.println("ENCONTRE UNA SOLUCION ALEATORIA");
+            System.out.println("Random Solution Found");
             return solution;
 		}
 

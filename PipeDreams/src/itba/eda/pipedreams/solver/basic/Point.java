@@ -33,7 +33,6 @@ public class Point {
         return new Point(row - 1, column);
     }
 
-
     public Point goW() {
         return new Point(row, column - 1);
     }

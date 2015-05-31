@@ -9,6 +9,7 @@ import itba.eda.pipedreams.solver.pipe.PipeBox;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 	private Deque<Pipe> pipes;
@@ -35,11 +36,9 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 		Point point = BasicBoard.getNext(board.getStartPoint(), board.getStartFlow());
 		Dir flow = board.getStartFlow();
         ///////////////////////////DEBUG
-        System.out.print("SOLUCION ACTUAL: ");
-        for(Pipe each : this) {
-            System.out.print(each + " ");
-        }
-        System.out.println();
+        System.out.println("--- Finding NEW best neighbor ---");
+        System.out.print("Current Solution: ");
+        this.print();
         ///////////////////////////DEBUG
 		for(Pipe pipe : this) {
 			GameSolution solution = new GameSolution();
@@ -47,15 +46,7 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 			flow = flow.opposite();
 
 			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution); //TODO: Ver si clonar aca esta bien
-            ///////////////////////////DEBUG
-            System.out.print("VECINO DE " + pipe + " : ");
-            for(Pipe each : solution) {
-                System.out.print(each + " ");
-            }
-            System.out.println();
-            ///////////////////////////DEBUG
-            System.out.println("PREV PARTIAL SOL. SIZE: " + (solution.size() - skip));
-            System.out.println("CURR PARTIAL SOL. SIZE: " + (prevSolution.size() - prevSkip));
+
 			if(solution.size() - skip > prevSolution.size() - prevSkip) {
 				prevSkip = skip;
 				prevSolution = solution;
@@ -63,7 +54,7 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 			}
 
 			flow = pipe.flow(flow);
-			BasicBoard.getNext(point, flow);
+			point = BasicBoard.getNext(point, flow);
 			i++;
 		}
 
@@ -75,11 +66,29 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 			pipeBox.removeOnePipe(pipe.ordinal());
 		}
 
+        System.out.print("Partial Solution: ");
+        prevSolution.print();
+
 		i = 0;
-		for(Pipe pipe : this) {
-			if(i < solutionIndex) {
-				prevSolution.pipes.addLast(pipe);
-			} else if(i >= solutionIndex && i < solutionIndex + prevSkip) {
+        /////////////VILLA////////////////////////
+        Deque<Pipe> firstPart = new LinkedList<>();
+        Iterator<Pipe> it = pipes.descendingIterator();
+
+        for(int j=0; j < solutionIndex; j++){
+            firstPart.offer(it.next());
+            i++;
+        }
+
+        Iterator<Pipe> auxIt = firstPart.descendingIterator();
+        while(auxIt.hasNext()) { //SE ESTABAN AGREGANDO BIEN, PERO AL REVES, HAY QUE GUARDAR LOS INICIALES EN UN STACK E IR POPPEANDO
+            Pipe pipe = auxIt.next();
+            prevSolution.pipes.addLast(pipe);
+        }
+        /////////////VILLA////////////////////////
+		while(it.hasNext()) {
+			Pipe pipe = it.next();
+
+            if(i >= solutionIndex && i < solutionIndex + prevSkip) {
 				pipeBox.addOnePipe(pipe.ordinal());
 			} else {
 				prevSolution.pipes.addFirst(pipe);
@@ -87,11 +96,8 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
             i++;
 		}
 
-        System.out.print("SOLUCION ELEGIDA " + i + " : ");
-        for(Pipe each : prevSolution) {
-            System.out.print(each + " ");
-        }
-        System.out.println();
+        System.out.print("Best Neighbor found: ");
+        prevSolution.print();
         ///////////////////////////DEBUG
 
 		return prevSolution;
@@ -106,4 +112,11 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 	public int compareTo(GameSolution o) {
 		return pipes.size() - o.pipes.size();
 	}
+
+    private void print() {
+        for(Pipe each : this) {
+            System.out.print(each + " ");
+        }
+        System.out.println();
+    }
 }
