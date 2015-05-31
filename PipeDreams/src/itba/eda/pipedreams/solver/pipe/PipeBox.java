@@ -99,4 +99,8 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
     public PipeBox createCopy() {
         return new PipeBox(sizes);
     }
+
+    public boolean hasPipe(Pipe pipe) {
+        return sizes[pipe.ordinal()] > 0;
+    }
 }

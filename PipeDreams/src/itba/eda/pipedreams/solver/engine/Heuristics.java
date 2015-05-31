@@ -16,21 +16,16 @@ public enum Heuristics implements Heuristic {
     L1 {
         private Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L4, Pipe.L1, Pipe.L2, Pipe.CROSS));
         @Override
-        public int apply(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
 
             if (board.isEmpty(p.goS()) && board.isEmpty(p.goE()) && board.isEmpty(p.goSE())) {
-                if (sol.hasPipe(Pipe.CROSS) && sol.hasPipe(Pipe.L4) && sol.hasPipe(Pipe.L2)) {
+                if (pipeBox.hasPipe(Pipe.CROSS) && pipeBox.hasPipe(Pipe.L4) && pipeBox.hasPipe(Pipe.L2)) {
                     Iterator<Pipe> it = from == Dir.WEST ? replace.iterator() : replace.descendingIterator();
                     Pipe curr;
-
                     while(it.hasNext()) {
                         curr = it.next();
-                        sol.push(curr);
-                        sol.removePipe(curr);
+                        sol.add(curr);
                     }
-
-                    sol.addPipe(Pipe.L1);
-
                     return 1;
                 }
             }
@@ -41,15 +36,14 @@ public enum Heuristics implements Heuristic {
 
         private Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L3, Pipe.L2, Pipe.L1, Pipe.CROSS));
         @Override
-        public int apply(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             if (board.isEmpty(p.goS()) && board.isEmpty(p.goW()) && board.isEmpty(p.goSW())) {
-                if (sol.hasPipe(Pipe.CROSS) && sol.hasPipe(Pipe.L1) && sol.hasPipe(Pipe.L3)) {
+                if (pipeBox.hasPipe(Pipe.CROSS) && pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L3)) {
                     Iterator<Pipe> it = from == Dir.EAST ? replace.iterator() : replace.descendingIterator();
                     Pipe curr;
                     while(it.hasNext()) {
                         curr = it.next();
-                        sol.push(curr);
-                        sol.removePipe(curr);
+                        sol.add(curr);
                     }
                     sol.addPipe(Pipe.L2);
 
@@ -78,7 +72,7 @@ public enum Heuristics implements Heuristic {
     L3 {
         private Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L2, Pipe.L3, Pipe.L4, Pipe.CROSS));
         @Override
-        public int apply(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             if (board.isEmpty(p.goS()) && board.isEmpty(p.goE()) && board.isEmpty(p.goSE())) {
                 if (sol.hasPipe(Pipe.CROSS) && sol.hasPipe(Pipe.L4) && sol.hasPipe(Pipe.L2)) {
                     Iterator<Pipe> it = from == Dir.EAST ? replace.iterator() : replace.descendingIterator();
@@ -101,7 +95,7 @@ public enum Heuristics implements Heuristic {
     L4 {
         private Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L1, Pipe.L4, Pipe.L3, Pipe.CROSS));
         @Override
-        public int apply(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             if(board.isEmpty(p.goE()) && board.isEmpty(p.goNE()) && board.isEmpty(p.goN())) {
                 if(sol.hasPipe(Pipe.CROSS) && sol.hasPipe(Pipe.L1) && sol.hasPipe(Pipe.L3)) {
                     Iterator<Pipe> it = from == Dir.EAST ? replace.iterator() : replace.descendingIterator();
@@ -145,7 +139,7 @@ public enum Heuristics implements Heuristic {
     },
     I2 {
         @Override
-        public int apply(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
+        public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
             if(board.getPipe(p.goE()) == Pipe.L1) {
                 if ((sol.hasPipe(Pipe.L1) || sol.hasPipe(Pipe.CROSS)) && sol.hasPipe(Pipe.L2) && sol.hasPipe(Pipe.I1) && sol.hasPipe(Pipe.L4)) {
                     if (board.isEmpty(p.goS()) && board.isEmpty(p.goSE())) {
@@ -170,8 +164,6 @@ public enum Heuristics implements Heuristic {
             } else if(board.getPipe(p.goW()) == Pipe.L3) {
                 if(sol.hasPipe(Pipe.L4) && sol.hasPipe(Pipe.L2) && (sol.hasPipe(Pipe.I1) || sol.hasPipe(Pipe.CROSS))) {
                     if(board.isEmpty(p.goN()) && board.isEmpty(p.goNW())) {
-                        sol.addPipe(Pipe.I2);
-
                         sol.push(Pipe.L2);
                         sol.removePipe(Pipe.L2);
                         sol.push(Pipe.L4);
@@ -194,10 +186,11 @@ public enum Heuristics implements Heuristic {
     };
 
     public static int getHeuristic(Board board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
-        return values()[board.getPipe(p).ordinal()].apply(board, p, sol, pipeBox, from);
+//        return values()[board.getPipe(p).ordinal()].apply(board, p, sol, pipeBox, from);
+        return 0;
     }
 
 	public static int apply(BasicBoard board, Point point, Dir flow, PipeBox pipeBox, GameSolution solution) {
-		return 0; // TODO: do xD
+		return values()[board.getPipe(point).ordinal()].apply(board, point, solution, pipeBox, flow);
 	}
 }
