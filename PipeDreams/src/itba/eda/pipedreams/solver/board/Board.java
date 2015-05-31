@@ -89,6 +89,9 @@ public class Board extends Observable implements BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
+        if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelva falso y no haya que chequear si esta dentro de los limites
+            return false;
+        }
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
 	}
 
@@ -173,12 +176,16 @@ public class Board extends Observable implements BasicBoard {
 
 		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
 		Dir flow = startFlow;
+        for(Pipe pipe : pipes) {
+            System.out.print(pipe + " ");
+        }
+        System.out.println();
 		for(Pipe pipe : pipes) {
 			flow = flow.opposite();
 			Tile tile = Tile.get(pipe);
 			board[point.getRow()][point.getColumn()] = tile;
 			flow = tile.getPipe().flow(flow);
-			BasicBoard.getNext(point, flow);
+			point = BasicBoard.getNext(point, flow);
 		}
 
 		setChanged();

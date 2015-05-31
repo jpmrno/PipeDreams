@@ -38,7 +38,6 @@ public interface BasicBoard extends GameBoard {
 			default:
 				throw new IllegalStateException();
 		}
-
 		return point;
 	}
 
