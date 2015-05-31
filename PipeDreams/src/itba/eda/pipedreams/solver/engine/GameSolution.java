@@ -40,7 +40,7 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 
 			flow = flow.opposite();
 
-			int skip = Heuristics.apply(board, point, flow, pipeBox, solution);
+			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution); //TODO: Ver si clonar aca esta bien
 
 			if(solution.size() - skip > prevSolution.size() - prevSkip) {
 				prevSkip = skip;
@@ -70,6 +70,7 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 			} else {
 				prevSolution.pipes.addFirst(pipe);
 			}
+            i++;
 		}
 
 
