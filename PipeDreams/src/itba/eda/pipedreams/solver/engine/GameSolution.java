@@ -32,7 +32,6 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 	public GameSolution bestNeighbor(BasicBoard board, PipeBox pipeBox) { // TODO: PartialSolution class?
 		GameSolution prevSolution = new GameSolution();
 		int prevSkip = 0, solutionIndex = -1, i = 0;
-
 		Point point = BasicBoard.getNext(board.getStartPoint(), board.getStartFlow());
 		Dir flow = board.getStartFlow();
 
@@ -72,6 +71,8 @@ public class GameSolution implements Iterable<Pipe>, Comparable<GameSolution> {
 				prevSolution.pipes.addFirst(pipe);
 			}
 		}
+
+
 
 		return prevSolution;
 	}

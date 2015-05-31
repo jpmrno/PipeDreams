@@ -95,4 +95,8 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
 
 		return map;
 	}
+
+    public PipeBox createCopy() {
+        return new PipeBox(sizes);
+    }
 }

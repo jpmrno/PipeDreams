@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 100;
+	private static final int DELAY = 10;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -184,10 +184,13 @@ public class Engine implements Runnable {
 
 		GameSolution bestSolution = null;
 		GameSolution localSolution;
+        PipeBox initialPipeBox = pipeBox.createCopy();
 		boolean betterFound;
 
 		while(timer.getRunningTime() < time) {
-			board.clear(); //TODO: Test
+			board.clear();
+            pipeBox = initialPipeBox.createCopy();
+
 			localSolution = randomSolution();
 
 			if(withProgress) {
@@ -197,8 +200,8 @@ public class Engine implements Runnable {
 
 			if(localSolution == null) {
 				timer.stopClock();
-				System.out.println("No solution found."); // FIXME: Esta entrando aca... Porque?
-				return; //TODO: Que hacer cuando no existe la solucion?
+				System.out.println("No solution found.");
+				return;
 			}
 
 			do {
@@ -236,8 +239,9 @@ public class Engine implements Runnable {
 		GameSolution solution = new GameSolution();
 		int[] mapPipeBox = PipeBox.shufflePipes();
 
-		if(randomSolutionRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
-			return solution;
+        if(randomSolutionRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
+            System.out.println("ENCONTRE UNA SOLUCION ALEATORIA");
+            return solution;
 		}
 
 		return null;
@@ -255,9 +259,10 @@ public class Engine implements Runnable {
 				Pipe pipe = board.getPipe(point);
 				solution.add(pipe);
 
-				randomSolutionRec(BasicBoard.getNext(point, pipe.flow(from)), pipe.flow(from), solution, mapPipeBox);
+				if(randomSolutionRec(BasicBoard.getNext(point, pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
+                    return true;
+                }
 				BasicBoard.getPrevious(point, pipe.flow(from));
-
 				solution.remove();
 			}
 			return false;
