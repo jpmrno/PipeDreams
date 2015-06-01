@@ -122,7 +122,7 @@ public enum Heuristics implements Heuristic {
         private Deque<Pipe> replace2 = new LinkedList<>(Arrays.asList(Pipe.L4, Pipe.L2, Pipe.L3, Pipe.L1));
         @Override
         public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
-            Point next = BasicBoard.getNext(p, from.opposite());
+            Point next = p.getNext(from.opposite());
 
             // I1 seguido de I1
             if (board.withinLimits(next)) {
@@ -163,7 +163,7 @@ public enum Heuristics implements Heuristic {
             }
 
             //I1 seguido de algun L
-            Point nextPoint = BasicBoard.getNext(p, from.opposite()); //TODO: No deberia necesitarse volver a tomar el next
+            Point nextPoint = p.getNext(from.opposite()); //TODO: No deberia necesitarse volver a tomar el next
 
             //Vengo desde SOUTH
             if(board.withinLimits(nextPoint)) {
@@ -206,7 +206,7 @@ public enum Heuristics implements Heuristic {
         private Deque<Pipe> replace2 = new LinkedList<>(Arrays.asList(Pipe.L4, Pipe.L2, Pipe.L1, Pipe.L3));
         @Override
         public int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from) {
-            Point next = BasicBoard.getNext(p, from.opposite());
+            Point next = p.getNext(from.opposite());
             if (board.withinLimits(next)) {
                 if (board.getPipe(next) == Pipe.I2) { //Caso generico para 2 "--"
                     boolean hasPipes = pipeBox.hasPipe(Pipe.L1) && pipeBox.hasPipe(Pipe.L2) && pipeBox.hasPipe(Pipe.L3) && pipeBox.hasPipe(Pipe.L4);
