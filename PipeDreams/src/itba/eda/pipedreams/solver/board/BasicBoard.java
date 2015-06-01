@@ -42,6 +42,6 @@ public interface BasicBoard extends GameBoard {
 	}
 
 	static Point getPrevious(Point point, Dir dir) {
-		return getNext(point, dir.opposite());
+		return BasicBoard.getNext(point, dir.opposite());
 	}
 }

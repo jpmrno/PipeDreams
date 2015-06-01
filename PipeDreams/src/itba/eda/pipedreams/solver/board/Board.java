@@ -154,7 +154,7 @@ public class Board extends Observable implements BasicBoard {
 			return false;
 		}
 
-		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
+		Point point = getStartPoint().getNext(startFlow);
 		Dir flow = startFlow;
 
 		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
@@ -162,7 +162,7 @@ public class Board extends Observable implements BasicBoard {
 			Tile tile = Tile.get(pipes.removeLast());
 			board[point.getRow()][point.getColumn()] = tile;
 			flow = tile.getPipe().flow(flow);
-			point = BasicBoard.getNext(point, flow);
+			point = point.getNext(flow);
 		}
 
 		setChanged();
@@ -175,7 +175,7 @@ public class Board extends Observable implements BasicBoard {
 			return false;
 		}
 
-		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
+		Point point = getStartPoint().getNext(startFlow);
 		Dir flow = startFlow;
         System.out.print("Drawing: ");
 		for(Pipe pipe : pipes) {
@@ -184,7 +184,7 @@ public class Board extends Observable implements BasicBoard {
 			Tile tile = Tile.get(pipe);
 			board[point.getRow()][point.getColumn()] = tile;
 			flow = pipe.flow(flow);
-			point = BasicBoard.getNext(point, flow);
+			point = point.getNext(flow);
 		}
         System.out.println();
 

@@ -190,7 +190,7 @@ public class Engine implements Runnable {
 		GameSolution solution = new GameSolution();
 		int[] mapPipeBox = PipeBox.shufflePipes();
 
-        if(randomSolutionRec(BasicBoard.getNext(board.getStartPoint().clone(), board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
+        if(randomSolutionRec(board.getStartPoint().getNext(board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
             System.out.println("Random Solution Found");
             return solution;
 		}
