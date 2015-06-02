@@ -38,11 +38,10 @@ public interface BasicBoard extends GameBoard {
 			default:
 				throw new IllegalStateException();
 		}
-
 		return point;
 	}
 
 	static Point getPrevious(Point point, Dir dir) {
-		return getNext(point, dir.opposite());
+		return BasicBoard.getNext(point, dir.opposite());
 	}
 }

@@ -2,7 +2,6 @@ package itba.eda.pipedreams.solver.engine;
 
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
-import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.board.Dir;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
@@ -11,89 +10,97 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Solution implements Iterable<Pipe> {
-	private Deque<Pipe> solution;
-	private int[] aux;
+public class Solution implements Iterable<Pipe>, Comparable<Solution> {
+	private Deque<Pipe> pipes;
 
 	public Solution() {
-		solution = new LinkedList<>();
+		pipes = new LinkedList<>();
 	}
 
-	public void applySolution(Board board) {
-        Dir to = board.getStartFlow();
-        Point currPoint = BasicBoard.getNext(board.getStartPoint(), to);
-//        System.out.println("X= " + currPoint.getRow() + "Y= " + currPoint.getColumn());
-        Pipe currPipe;
-
-		while(!solution.isEmpty()) {
-//            System.out.println("___________________While_____________________");
-//            System.out.println("Este punto es X= " + currPoint.getRow() + "Y= " + currPoint.getColumn());
-            board.removePipe(currPoint);
-//            board.print();
-            currPipe = solution.removeLast();
-//            System.out.println(currPipe);
-            board.putPipe(currPipe, currPoint);
-//            board.print();
-            to = currPipe.flow(to.opposite());
-//            System.out.println("Moverse hacia: "+ to);
-            currPoint = BasicBoard.getNext(currPoint, to);
-//            System.out.println("El nuevo punto debe ser: X= " + currPoint.getRow() + "Y= " + currPoint.getColumn());
-
-//            System.out.println(currPipe);
-//            System.out.print("La cola es:");
-//            for (Pipe each : solution) {
-//                System.out.print(each +" - " );
-//            }
-//            System.out.println();
-
-		}
-
-        System.out.println("Solucion aplicada");
+	public void add(Pipe pipe) {
+		pipes.push(pipe);
 	}
 
-	public void setPipe(Pipe pipe) {
-		solution.addFirst(pipe);
+	public Pipe remove() {
+		return pipes.pop();
 	}
 
 	public int size() {
-		return solution.size();
+		return pipes.size();
 	}
 
-	public void push(Pipe pipe) {
-		solution.push(pipe);
-	}
+	public Solution bestNeighbor(BasicBoard board, PipeBox pipeBox) { // TODO: PartialSolution class?
+		Solution prevSolution = new Solution();
+		int prevSkip = 0, solutionIndex = -1, i = 0;
+		Point point = board.getStartPoint().getNext(board.getStartFlow());
+		Dir flow = board.getStartFlow();
 
-	public Pipe pop() {
-		return solution.pop();
-	}
+		for(Pipe pipe : this) {
+			Solution solution = new Solution();
 
-	public Solution cloneSol() {
-		Solution newSol = new Solution();
-		for(Pipe each : this) {
-			newSol.push(each);
+			flow = flow.opposite();
+
+			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution); // TODO: Ver si clonar aca esta bien
+
+			if(solution.size() - skip > prevSolution.size() - prevSkip) {
+				prevSkip = skip;
+				prevSolution = solution;
+				solutionIndex = i;
+			}
+
+			flow = pipe.flow(flow);
+			point = point.getNext(flow);
+			i++;
 		}
-        if(aux != null) {
-            newSol.aux = new int[aux.length];
-            for(int i=0; i < aux.length; i++) {
-                newSol.aux[i] = aux[i];
-            }
-        }
-        return newSol;
-	}
 
-	public int[] getAuxPipeBox() {
-		return aux;
-	}
+		if(solutionIndex == -1) {
+			return this; // TODO: Que hacer cuando soy la mejor?
+		}
 
-    public void copyPipeBox(PipeBox pipebox) {
-        aux = new int[pipebox.length()];
-        for(int i=0; i < aux.length; i++) {
-            aux[i] = pipebox.getSize(i);
+		for(Pipe pipe : prevSolution) {
+			pipeBox.removeOnePipe(pipe.ordinal());
+		}
+
+        Deque<Pipe> firstPart = new LinkedList<>();
+        Iterator<Pipe> it = pipes.descendingIterator();
+        for(i = 0; i < solutionIndex; i++) { // TODO: FEO?
+            firstPart.offer(it.next());
         }
-    }
+
+        Iterator<Pipe> auxIt = firstPart.descendingIterator();
+        while(auxIt.hasNext()) {
+            prevSolution.pipes.addLast(auxIt.next());
+        }
+
+		while(it.hasNext()) {
+			Pipe pipe = it.next();
+
+            if(i < solutionIndex + prevSkip) {
+				pipeBox.addOnePipe(pipe.ordinal());
+			} else {
+				prevSolution.pipes.addFirst(pipe);
+			}
+
+            i++;
+		}
+
+		return prevSolution;
+	}
 
 	@Override
 	public Iterator<Pipe> iterator() {
-		return solution.descendingIterator();
+		return pipes.descendingIterator();
 	}
+
+	@Override
+	public int compareTo(Solution o) {
+		return pipes.size() - o.pipes.size();
+	}
+
+    private void print(String which) { // TODO: DEBUGGING ONLY
+        for(Pipe each : this) {
+            System.out.print(each + " ");
+        }
+        System.out.println();
+    }
 }

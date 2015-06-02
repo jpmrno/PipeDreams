@@ -1,7 +1,7 @@
 package itba.eda.pipedreams;
 
+import itba.eda.pipedreams.solver.basic.PDSolver;
 import itba.eda.pipedreams.solver.basic.PDSolverArgs;
-import itba.eda.pipedreams.solver.PDSolver;
 import itba.eda.pipedreams.uielements.BoardPane;
 import javafx.application.Application;
 import javafx.scene.Scene;

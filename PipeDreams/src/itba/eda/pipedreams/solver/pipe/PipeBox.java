@@ -1,11 +1,12 @@
 package itba.eda.pipedreams.solver.pipe;
 
 import java.util.Iterator;
+import java.util.Random;
 
 public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return BasicPipe?
 	private int originalSize;
 
-	private Pipe[] pipes = Pipe.values();
+	private static Pipe[] pipes = Pipe.values();
 	private int[] sizes;
 
 	public PipeBox(int[] sizes) {
@@ -75,5 +76,36 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	public static int[] shufflePipes() {
+		int[] map = new int[pipes.length];
+
+		for(int i=0; i < map.length; i++) {
+			map[i] = i;
+		}
+
+		Random rand = new Random();
+		for (int i = map.length - 1; i > 0; i--) {
+			int index = rand.nextInt(i + 1);
+			int aux = map[index];
+			map[index] = map[i];
+			map[i] = aux;
+		}
+
+		return map;
+	}
+
+    public boolean hasPipe(Pipe pipe) {
+        return sizes[pipe.ordinal()] > 0;
+    }
+
+	public boolean hasPipe(Pipe pipe, int size) {
+		return sizes[pipe.ordinal()] >= size;
+	}
+
+	@Override
+	public PipeBox clone() {
+		return new PipeBox(sizes);
 	}
 }

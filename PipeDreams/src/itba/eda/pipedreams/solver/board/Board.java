@@ -1,18 +1,21 @@
 package itba.eda.pipedreams.solver.board;
 
 import itba.eda.pipedreams.solver.basic.Point;
+import itba.eda.pipedreams.solver.engine.Solution;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.util.Deque;
 import java.util.Observable;
 
 public class Board extends Observable implements BasicBoard {
+	private String[] file;
 
 	private Tile[][] board;
 	private Point startPoint;
 	private Dir startFlow;
 
 	public Board(String[] tiles) {
+		file = tiles.clone();
 		board = new Tile[tiles.length][tiles[0].length()];
 
 		for(int i = 0; i < tiles.length; i++) {
@@ -30,8 +33,9 @@ public class Board extends Observable implements BasicBoard {
 
 	private Tile setPiece(char c, int row, int column) {
 		Tile piece;
+		c = Character.toUpperCase(c);
 
-		switch(Character.toUpperCase(c)) {
+		switch(c) {
 			case 'N':
 			case 'S':
 			case 'W':
@@ -86,6 +90,9 @@ public class Board extends Observable implements BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
+        if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelvan falso y no haya que chequear si esta dentro de los limites
+            return false;
+        }
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
 	}
 
@@ -147,7 +154,7 @@ public class Board extends Observable implements BasicBoard {
 			return false;
 		}
 
-		Point point = BasicBoard.getNext(getStartPoint(), startFlow);
+		Point point = getStartPoint().getNext(startFlow);
 		Dir flow = startFlow;
 
 		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
@@ -155,12 +162,40 @@ public class Board extends Observable implements BasicBoard {
 			Tile tile = Tile.get(pipes.removeLast());
 			board[point.getRow()][point.getColumn()] = tile;
 			flow = tile.getPipe().flow(flow);
-			point = BasicBoard.getNext(point, flow);
+			point = point.getNext(flow);
 		}
 
 		setChanged();
 
 		return true;
+	}
+
+	public boolean draw(Solution pipes) {
+		if(pipes == null || pipes.size() == 0) {
+			return false;
+		}
+
+		Point point = getStartPoint().getNext(startFlow);
+		Dir flow = startFlow;
+
+		for(Pipe pipe : pipes) {
+			flow = flow.opposite();
+			Tile tile = Tile.get(pipe);
+			board[point.getRow()][point.getColumn()] = tile;
+			flow = pipe.flow(flow);
+			point = point.getNext(flow);
+		}
+
+		setChanged();
+		return true;
+	}
+
+	public void clear() {
+		for(int i = 0; i < file.length; i++) {
+			for(int j = 0; j < file[0].length(); j++) {
+				setPiece(file[i].charAt(j), i, j);
+			}
+		}
 	}
 
 	private static enum Tile {
