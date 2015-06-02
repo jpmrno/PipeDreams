@@ -84,23 +84,28 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
 		for(int i=0; i < map.length; i++) {
 			map[i] = i;
 		}
-		Random rand = new Random();
 
+		Random rand = new Random();
 		for (int i = map.length - 1; i > 0; i--) {
 			int index = rand.nextInt(i + 1);
-			int a = map[index];
+			int aux = map[index];
 			map[index] = map[i];
-			map[i] = a;
+			map[i] = aux;
 		}
 
 		return map;
 	}
 
-    public PipeBox createCopy() {
-        return new PipeBox(sizes);
-    }
-
     public boolean hasPipe(Pipe pipe) {
         return sizes[pipe.ordinal()] > 0;
     }
+
+	public boolean hasPipe(Pipe pipe, int size) {
+		return sizes[pipe.ordinal()] >= size;
+	}
+
+	@Override
+	public PipeBox clone() {
+		return new PipeBox(sizes);
+	}
 }

@@ -1,6 +1,6 @@
 package itba.eda.pipedreams.solver.engine;
 
-import itba.eda.pipedreams.solver.basic.Method;
+import itba.eda.pipedreams.solver.Method;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Board;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Engine implements Runnable {
-	private static final int DELAY = 400;
+	private static final int DELAY = 100;
 
 	private Board board; // TODO: Interfaces?
 	private Method method;
@@ -35,8 +35,7 @@ public class Engine implements Runnable {
 		switch(method) {
 			case EXACT:
 				try {
-
-					backtracking();
+					backtracking(); // TODO: Que hacer con las exceptions
 				} catch(InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -133,14 +132,14 @@ public class Engine implements Runnable {
 		Timer timer = new Timer();
 		timer.startClock();
 
-		GameSolution bestSolution = null;
-		GameSolution localSolution;
-        PipeBox initialPipeBox = pipeBox.createCopy();
+		Solution bestSolution = null;
+		Solution localSolution;
+        PipeBox initialPipeBox = pipeBox.clone();
 		boolean betterFound;
 
 		while(timer.getRunningTime() < time) {
 			board.clear();
-            pipeBox = initialPipeBox.createCopy();
+            pipeBox = initialPipeBox.clone();
 
 			localSolution = randomSolution();
 
@@ -157,7 +156,7 @@ public class Engine implements Runnable {
 
 			do {
 				betterFound = false;
-				GameSolution solution = localSolution.bestNeighbor(board, pipeBox);
+				Solution solution = localSolution.bestNeighbor(board, pipeBox);
 
 				if(solution.compareTo(localSolution) > 0) {
 					localSolution = solution;
@@ -178,27 +177,23 @@ public class Engine implements Runnable {
 		}
 		timer.stopClock();
 
-		if(bestSolution != null) {
-			board.draw(bestSolution);
-			board.notifyObservers();
-		} else {
-			System.out.println("No solution found.");
-		}
+		board.clear();
+		board.draw(bestSolution);
+		board.notifyObservers();
 	}
 
-	private GameSolution randomSolution() {
-		GameSolution solution = new GameSolution();
+	private Solution randomSolution() {
+		Solution solution = new Solution();
 		int[] mapPipeBox = PipeBox.shufflePipes();
 
         if(randomSolutionRec(board.getStartPoint().getNext(board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
-            System.out.println("Random Solution Found");
             return solution;
 		}
 
 		return null;
 	}
 
-	private boolean randomSolutionRec(Point point, Dir to, GameSolution solution, int[] mapPipeBox) {
+	private boolean randomSolutionRec(Point point, Dir to, Solution solution, int[] mapPipeBox) {
 		Dir from = to.opposite();
 
 		if(!board.withinLimits(point)) {

@@ -1,7 +1,7 @@
 package itba.eda.pipedreams.solver.board;
 
 import itba.eda.pipedreams.solver.basic.Point;
-import itba.eda.pipedreams.solver.engine.GameSolution;
+import itba.eda.pipedreams.solver.engine.Solution;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.util.Deque;
@@ -33,8 +33,9 @@ public class Board extends Observable implements BasicBoard {
 
 	private Tile setPiece(char c, int row, int column) {
 		Tile piece;
+		c = Character.toUpperCase(c);
 
-		switch(Character.toUpperCase(c)) {
+		switch(c) {
 			case 'N':
 			case 'S':
 			case 'W':
@@ -89,7 +90,6 @@ public class Board extends Observable implements BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
-        print();
         if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelvan falso y no haya que chequear si esta dentro de los limites
             return false;
         }
@@ -170,23 +170,21 @@ public class Board extends Observable implements BasicBoard {
 		return true;
 	}
 
-	public boolean draw(GameSolution pipes) {
+	public boolean draw(Solution pipes) {
 		if(pipes == null || pipes.size() == 0) {
 			return false;
 		}
 
 		Point point = getStartPoint().getNext(startFlow);
 		Dir flow = startFlow;
-        System.out.print("Drawing: ");
+
 		for(Pipe pipe : pipes) {
-            System.out.print(pipe + " - ");
 			flow = flow.opposite();
 			Tile tile = Tile.get(pipe);
 			board[point.getRow()][point.getColumn()] = tile;
 			flow = pipe.flow(flow);
 			point = point.getNext(flow);
 		}
-        System.out.println();
 
 		setChanged();
 		return true;

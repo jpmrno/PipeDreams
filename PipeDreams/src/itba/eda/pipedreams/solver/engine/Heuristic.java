@@ -6,5 +6,5 @@ import itba.eda.pipedreams.solver.board.Dir;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
 
 public interface Heuristic {
-    int apply(BasicBoard board, Point p, GameSolution sol, PipeBox pipeBox, Dir from);
+    int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from);
 }

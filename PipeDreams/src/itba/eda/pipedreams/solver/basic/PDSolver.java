@@ -1,7 +1,5 @@
-package itba.eda.pipedreams.solver;
+package itba.eda.pipedreams.solver.basic;
 
-import itba.eda.pipedreams.solver.basic.BoardDisplay;
-import itba.eda.pipedreams.solver.basic.PDSolverArgs;
 import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.engine.Engine;
 import itba.eda.pipedreams.solver.pipe.PipeBox;

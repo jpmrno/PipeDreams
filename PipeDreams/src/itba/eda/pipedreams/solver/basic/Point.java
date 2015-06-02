@@ -14,6 +14,7 @@ public class Point {
     public Point getNext(Dir to)
     {
         Point point;
+
         switch(to) {
             case NORTH:
                 point = new Point(row - 1, column);

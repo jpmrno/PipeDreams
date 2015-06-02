@@ -1,5 +1,6 @@
 package itba.eda.pipedreams.solver.basic;
 
+import itba.eda.pipedreams.solver.Method;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.io.BufferedReader;
