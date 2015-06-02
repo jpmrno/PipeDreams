@@ -87,7 +87,12 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 
 	@Override
 	public void update(Observable o, Object arg) {
-		Platform.runLater(this::paint);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				paint();
+			}
+		});
 	}
 
 	private enum GameTile { // TODO: Here? Better way? Check!
@@ -119,32 +124,34 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 		}
 
 		public static Image fromString(String str) {
-			switch(str) {
-				case "1":
+
+
+			switch(Character.toUpperCase(str.charAt(0))) {
+				case '1':
 					return L1.image;
-				case "2":
+				case '2':
 					return L2.image;
-				case "3":
+				case '3':
 					return L3.image;
-				case "4":
+				case '4':
 					return L4.image;
-				case "5":
+				case '5':
 					return I1.image;
-				case "6":
+				case '6':
 					return I2.image;
-				case "7":
+				case '7':
 					return CROSS.image;
-				case ".":
+				case '.':
 					return EMPTY.image;
-				case "#":
+				case '#':
 					return WALL.image;
-				case "N":
+				case 'N':
 					return START_N.image;
-				case "S":
+				case 'S':
 					return START_S.image;
-				case "E":
+				case 'E':
 					return START_E.image;
-				case "W":
+				case 'W':
 					return START_W.image;
 				default:
 					return null;

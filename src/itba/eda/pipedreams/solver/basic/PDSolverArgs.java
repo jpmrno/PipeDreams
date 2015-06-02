@@ -127,39 +127,37 @@ public class PDSolverArgs { // TODO: Static?
 	}
 
 	private void readFile(FileReader file) throws IOException {
-		try(BufferedReader br = new BufferedReader(file)) {
-			String line = br.readLine();
+		BufferedReader br = new BufferedReader(file);
+		String line = br.readLine();
 
-			if(!getDimensions(line)) {
-				throw  new IllegalArgumentException();
-			}
+		if(!getDimensions(line)) {
+			throw  new IllegalArgumentException();
+		}
 
-			boardFile = new String[rows];
-			for(int i = 0; i < rows; i++) {
-				line = br.readLine();
-				if(line == null || line.length() != columns) {
-					throw  new IllegalArgumentException();
-				}
-
-				boardFile[i] = line;
-			}
-
-			pipes = new int[ELEMS];
-			for(int i = 0; i < pipes.length; i++) {
-				line = br.readLine();
-
-				try {
-					pipes[i] = Integer.parseInt(line);
-				} catch(NumberFormatException e) {
-					throw  new IllegalArgumentException();
-				}
-			}
-
+		boardFile = new String[rows];
+		for(int i = 0; i < rows; i++) {
 			line = br.readLine();
-			if(line != null) {
+			if(line == null || line.length() != columns) {
 				throw  new IllegalArgumentException();
 			}
 
+			boardFile[i] = line;
+		}
+
+		pipes = new int[ELEMS];
+		for(int i = 0; i < pipes.length; i++) {
+			line = br.readLine();
+
+			try {
+				pipes[i] = Integer.parseInt(line);
+			} catch(NumberFormatException e) {
+				throw  new IllegalArgumentException();
+			}
+		}
+
+		line = br.readLine();
+		if(line != null) {
+			throw  new IllegalArgumentException();
 		}
 	}
 

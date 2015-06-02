@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public enum Heuristics implements BasicHeuristic {
 	L1 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L4, Pipe.L1, Pipe.L2, Pipe.CROSS));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.CROSS, Pipe.L4, Pipe.L1, Pipe.L2, Pipe.CROSS));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -86,7 +86,7 @@ public enum Heuristics implements BasicHeuristic {
 		}
 	},
 	L2 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L3, Pipe.L2, Pipe.L1, Pipe.CROSS));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.CROSS, Pipe.L3, Pipe.L2, Pipe.L1, Pipe.CROSS));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -158,7 +158,7 @@ public enum Heuristics implements BasicHeuristic {
 		}
 	},
 	L3 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L2, Pipe.L3, Pipe.L4, Pipe.CROSS));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.CROSS, Pipe.L2, Pipe.L3, Pipe.L4, Pipe.CROSS));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -233,7 +233,7 @@ public enum Heuristics implements BasicHeuristic {
 		}
 	},
 	L4 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.CROSS, Pipe.L1, Pipe.L4, Pipe.L3, Pipe.CROSS));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.CROSS, Pipe.L1, Pipe.L4, Pipe.L3, Pipe.CROSS));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -305,8 +305,8 @@ public enum Heuristics implements BasicHeuristic {
 		}
 	},
 	I1 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.L3, Pipe.L1, Pipe.L4, Pipe.L2));
-		private final Deque<Pipe> replace2 = new LinkedList<>(Arrays.asList(Pipe.L4, Pipe.L2, Pipe.L3, Pipe.L1));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.L3, Pipe.L1, Pipe.L4, Pipe.L2));
+		private final Deque<Pipe> replace2 = new LinkedList<Pipe>(Arrays.asList(Pipe.L4, Pipe.L2, Pipe.L3, Pipe.L1));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {
@@ -372,8 +372,8 @@ public enum Heuristics implements BasicHeuristic {
 		}
 	},
 	I2 {
-		private final Deque<Pipe> replace = new LinkedList<>(Arrays.asList(Pipe.L2, Pipe.L4, Pipe.L3, Pipe.L1));
-		private final Deque<Pipe> replace2 = new LinkedList<>(Arrays.asList(Pipe.L3, Pipe.L1, Pipe.L2, Pipe.L4));
+		private final Deque<Pipe> replace = new LinkedList<Pipe>(Arrays.asList(Pipe.L2, Pipe.L4, Pipe.L3, Pipe.L1));
+		private final Deque<Pipe> replace2 = new LinkedList<Pipe>(Arrays.asList(Pipe.L3, Pipe.L1, Pipe.L2, Pipe.L4));
 
 		@Override
 		public int apply(BasicBoard board, Point p, Solution sol, PipeBox pipeBox, Dir from) {

@@ -4,9 +4,11 @@ import itba.eda.pipedreams.solver.basic.PDSolver;
 import itba.eda.pipedreams.solver.basic.PDSolverArgs;
 import itba.eda.pipedreams.uielements.BoardPane;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 	private static PDSolverArgs arguments;
@@ -23,7 +25,12 @@ public class Main extends Application {
 		mainStage.setTitle("Pipe.it");
 		mainStage.setResizable(true);
 		mainStage.centerOnScreen();
-		mainStage.setOnCloseRequest(event -> System.exit(0));
+		mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				System.exit(0);
+			}
+		});
 
 		ScrollPane mainPane = new ScrollPane();
 		BoardPane boardPane = new BoardPane(arguments.getRows(), arguments.getColumns());

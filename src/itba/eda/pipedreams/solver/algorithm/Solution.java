@@ -15,7 +15,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 	private final Deque<Pipe> pipes;
 
 	public Solution() {
-		pipes = new LinkedList<>();
+		pipes = new LinkedList<Pipe>();
 	}
 
 	public void add(Pipe pipe) {
@@ -70,7 +70,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 	}
 
 	private static void concat(Solution ret, Solution sol, int index, BasicPipeBox pipeBox, int toAdd) {
-		Deque<Pipe> firstPart = new LinkedList<>();
+		Deque<Pipe> firstPart = new LinkedList<Pipe>();
 		Iterator<Pipe> it = sol.pipes.descendingIterator();
 		int i = 0;
 		for(; i < index; i++) {
