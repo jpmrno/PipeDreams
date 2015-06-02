@@ -9,43 +9,44 @@ import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
 
 public class PDHillClimbing implements Algorithm {
-	private PipeBox pipeBox;
+	private Timer timer;
 	private final int runningTime;
+
+	private PipeBox pipeBox;
 	private final BasicBoard board;
 	private final boolean withProgress;
 
 	public PDHillClimbing(BasicBoard board, PipeBox pipeBox, int time, boolean withProgress) {
 		this.board = board;
 		this.pipeBox = pipeBox;
-		this.runningTime = Timer.convertToMiliseconds(time);
+		this.runningTime = Timer.convertToMilliseconds(time);
 		this.withProgress = withProgress;
 	}
 
 	@Override
-	public void solve() throws InterruptedException {
-		Timer timer = new Timer();
-		timer.startClock();
+	public int solve() throws InterruptedException {
+		timer = new Timer();
+		timer.start();
 
 		Solution bestSolution = null;
 		Solution localSolution;
 		PipeBox initialPipeBox = pipeBox.clone();
 		boolean betterFound;
 
-		while(timer.getRunningTime() < runningTime) {
+		while(hasTime()) {
 			board.clear();
 			pipeBox = initialPipeBox.clone();
 
 			localSolution = randomSolution();
 
+			if(localSolution == null) {
+				timer.stop();
+				return 0;
+			}
+
 			if(withProgress) {
 				board.notifyObservers();
 				Thread.sleep(Engine.DELAY);
-			}
-
-			if(localSolution == null) {
-				timer.stopClock();
-				System.out.println("No solution found.");
-				return;
 			}
 
 			do {
@@ -56,38 +57,44 @@ public class PDHillClimbing implements Algorithm {
 					localSolution = solution;
 					betterFound = true;
 
-					board.draw(localSolution);
+					board.draw(localSolution.iterator());
 
 					if(withProgress) {
 						board.notifyObservers();
 						Thread.sleep(Engine.DELAY);
 					}
 				}
-			} while(betterFound && timer.getRunningTime() < runningTime);
+			} while(betterFound && hasTime());
 
 			if(bestSolution == null || localSolution.compareTo(bestSolution) > 0) {
 				bestSolution = localSolution;
 			}
 		}
-		timer.stopClock();
+		timer.stop();
+
+		if(bestSolution == null) {
+			return 0;
+		}
 
 		board.clear();
-		board.draw(bestSolution);
+		board.draw(bestSolution.iterator());
 		board.notifyObservers();
+
+		return bestSolution.size() + 1;
 	}
 
 	private Solution randomSolution() {
 		Solution solution = new Solution();
-		int[] mapPipeBox = PipeBox.shufflePipes();
 
-		if(randomSolutionRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
+		if(randomSolutionRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), solution)) {
 			return solution;
 		}
 
 		return null;
 	}
 
-	private boolean randomSolutionRec(Point point, Dir to, Solution solution, int[] mapPipeBox) {
+	private boolean randomSolutionRec(Point point, Dir to, Solution solution) {
+		int[] mapPipeBox = PipeBox.shufflePipes();
 		Dir from = to.opposite();
 
 		if(!board.withinLimits(point)) {
@@ -99,11 +106,16 @@ public class PDHillClimbing implements Algorithm {
 				Pipe pipe = board.getPipe(point);
 				solution.add(pipe);
 
-				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
+				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution)) {
 					return true;
 				}
+
 				point.previous(pipe.flow(from));
 				solution.remove();
+
+				if(!hasTime()) {
+					return false;
+				}
 			}
 			return false;
 		}
@@ -118,7 +130,7 @@ public class PDHillClimbing implements Algorithm {
 				board.putPipe(pipe, point);
 				solution.add(pipe);
 
-				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
+				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution)) {
 					return true;
 				}
 				point.previous(pipe.flow(from));
@@ -126,8 +138,16 @@ public class PDHillClimbing implements Algorithm {
 				solution.remove();
 				board.removePipe(point);
 				pipeBox.addOnePipe(pipe);
+
+				if(!hasTime()) {
+					return false;
+				}
 			}
 		}
 		return false;
+	}
+
+	private boolean hasTime() {
+		return timer.getRunningTime() < runningTime;
 	}
 }

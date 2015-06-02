@@ -9,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class PDSolverArgs { // TODO: Static?
+public class PDSolverArgs {
 	private static final int ELEMS = Pipe.values().length;
 
 	private Method method;
@@ -52,7 +52,7 @@ public class PDSolverArgs { // TODO: Static?
 			throw new IllegalArgumentException("Invalid arguments.");
 		}
 
-		try { // TODO: Ugly?
+		try {
 			FileReader file = new FileReader(fileName);
 			readFile(file);
 		} catch(FileNotFoundException e) {

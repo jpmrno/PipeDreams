@@ -30,7 +30,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		return pipes.size();
 	}
 
-	public Solution bestNeighbor(BasicBoard board, PipeBox pipeBox) { // TODO: PartialSolution class?
+	public Solution bestNeighbor(BasicBoard board, PipeBox pipeBox) {
 		Solution prevSolution = new Solution();
 		int prevSkip = 0, solutionIndex = -1, i = 0;
 
@@ -57,22 +57,48 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		}
 
 		if(solutionIndex == -1) {
-			return this; // TODO: Que hacer cuando soy la mejor?
+			return this;
 		}
 
 		for(Pipe pipe : prevSolution) {
 			pipeBox.removeOnePipe(pipe);
 		}
 
-        concat(prevSolution, this, solutionIndex, pipeBox, prevSkip);
+        join(prevSolution, this, solutionIndex, pipeBox, prevSkip);
 
 		return prevSolution;
 	}
 
-	private static void concat(Solution ret, Solution sol, int index, BasicPipeBox pipeBox, int toAdd) {
+	public void print() {
+		for(Pipe pipe : this) {
+			System.out.print(pipe + "\t");
+		}
+		System.out.println();
+	}
+
+	public String toString() {
+		return "Solution {" + pipes + "}";
+	}
+
+	@Override
+	public Iterator<Pipe> iterator() {
+		return pipes.descendingIterator();
+	}
+
+	public Iterator<Pipe> descendingIterator() {
+		return pipes.iterator();
+	}
+
+	@Override
+	public int compareTo(Solution o) {
+		return pipes.size() - o.pipes.size();
+	}
+
+	private static void join(Solution ret, Solution sol, int index, BasicPipeBox pipeBox, int toAdd) {
 		Deque<Pipe> firstPart = new LinkedList<Pipe>();
-		Iterator<Pipe> it = sol.pipes.descendingIterator();
+		Iterator<Pipe> it = sol.iterator();
 		int i = 0;
+
 		for(; i < index; i++) {
 			firstPart.offer(it.next());
 		}
@@ -95,13 +121,11 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		}
 	}
 
-	@Override
-	public Iterator<Pipe> iterator() {
-		return pipes.descendingIterator();
-	}
+	public static void copy(Solution from, Solution to) {
+		to.pipes.clear();
 
-	@Override
-	public int compareTo(Solution o) {
-		return pipes.size() - o.pipes.size();
+		for(Pipe aux : from) {
+			to.pipes.add(aux);
+		}
 	}
 }

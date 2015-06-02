@@ -25,10 +25,22 @@ public class Engine implements Runnable {
 
 	@Override
 	public void run() {
+		Timer timer = new Timer();
+		timer.start();
+
+		int longest = 0;
 		try {
-			algorithm.solve();
+			longest = algorithm.solve();
 		} catch(InterruptedException e) {
 			e.printStackTrace(); // TODO: ?
 		}
+		timer.stop();
+
+		if(longest == 0) {
+			System.out.println("No solution found.");
+		} else {
+			System.out.println("Longest path found: " + longest);
+		}
+		timer.printRunningTime();
 	}
 }

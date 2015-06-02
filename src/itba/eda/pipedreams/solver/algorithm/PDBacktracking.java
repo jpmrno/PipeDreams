@@ -4,13 +4,8 @@ import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Dir;
 import itba.eda.pipedreams.solver.engine.Engine;
-import itba.eda.pipedreams.solver.engine.Timer;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
-
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class PDBacktracking implements Algorithm {
 	private final BasicBoard board;
@@ -24,44 +19,45 @@ public class PDBacktracking implements Algorithm {
 	}
 
 	@Override
-	public void solve() throws InterruptedException {
-		Timer timer = new Timer();
-		timer.startClock();
-
-		Deque<Pipe> longestPath = new LinkedList<Pipe>();
-		Deque<Pipe> currPath = new LinkedList<Pipe>();
+	public int solve() throws InterruptedException {
+		Solution longestPath = new Solution();
+		Solution currPath = new Solution();
 		backtrackingRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
-		board.draw(longestPath);
+
+		System.out.println(longestPath);
+		board.draw(longestPath.descendingIterator());
 		board.notifyObservers();
 
-		timer.stopClock(); //TODO Preguntar si deberia ir en start()
+		return longestPath.size() + 1;
 	}
 
-	private void backtrackingRec(Point point, Dir to, Deque<Pipe> currentPath, Deque<Pipe> longestPath) throws InterruptedException {
+	private void backtrackingRec(Point point, Dir to, Solution currentPath, Solution longestPath) throws InterruptedException {
 		Dir from = to.opposite();
 
-		if(withProgress) { // TODO: OK here?
+		if(withProgress) {
 			board.notifyObservers();
 			Thread.sleep(Engine.DELAY);
 		}
 
 		if(!board.withinLimits(point)) {
 			if(currentPath.size() > longestPath.size()) {
-				copyQueue(currentPath, longestPath);
+				Solution.copy(currentPath, longestPath);
 			}
+
 			return;
 		}
 
 		if(!board.isEmpty(point)) {
 			if(!board.isBlocked(point, from)) {
 				Pipe pipe = board.getPipe(point);
-				currentPath.push(pipe);
+				currentPath.add(pipe);
 
 				backtrackingRec(point.next(pipe.flow(from)), pipe.flow(from), currentPath, longestPath);
-				point.next(pipe.flow(from));
+				point.previous(pipe.flow(from));
 
-				currentPath.pop();
+				currentPath.remove();
 			}
+
 			return;
 		}
 
@@ -73,7 +69,7 @@ public class PDBacktracking implements Algorithm {
 			if(flow != null && size > 0) {
 				pipeBox.removeOnePipe(pipe);
 				board.putPipe(pipe, point);
-				currentPath.push(pipe);
+				currentPath.add(pipe);
 
 				backtrackingRec(point.next(pipe.flow(from)), pipe.flow(from), currentPath, longestPath);
 				point.previous(pipe.flow(from));
@@ -82,22 +78,14 @@ public class PDBacktracking implements Algorithm {
 					return;
 				}
 
-				currentPath.pop();
+				currentPath.remove();
 				board.removePipe(point);
 				pipeBox.addOnePipe(pipe);
 			}
 		}
 	}
 
-	private boolean bestSolution(Deque<Pipe> longestPath) {
+	private boolean bestSolution(Solution longestPath) {
 		return longestPath.size() == pipeBox.getLongestPossible();
-	}
-
-	private <T> void copyQueue(Queue<T> from, Queue<T> to) { // TODO: Better way?
-		to.clear();
-
-		for(T aux : from) {
-			to.add(aux);
-		}
 	}
 }

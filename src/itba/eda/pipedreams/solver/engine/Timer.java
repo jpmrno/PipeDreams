@@ -10,20 +10,23 @@ public class Timer {
 		isRunning = false;
 	}
 	
-	public void startClock() {
+	public void start() {
 		if(!isRunning) {
 			runningTime = System.currentTimeMillis();
 			isRunning = true;
-		} else {
-			System.out.println("Timer has already started");
 		}
 	}
 	
-	public void stopClock(){
+	public void stop() {
 		if(isRunning) {
 			runningTime = System.currentTimeMillis() - runningTime;
 			isRunning = false;
 		}
+	}
+
+	public void reset() {
+		runningTime = 0;
+		isRunning = false;
 	}
 
 	public long getRunningTime() {
@@ -42,7 +45,7 @@ public class Timer {
 		}
 	}
 
-	public static int convertToMiliseconds(int min) {
+	public static int convertToMilliseconds(int min) {
 		return min * 60 * 1000;
 	}
 }

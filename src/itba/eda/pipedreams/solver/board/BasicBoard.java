@@ -1,11 +1,10 @@
 package itba.eda.pipedreams.solver.board;
 
-import itba.eda.pipedreams.solver.algorithm.Solution;
 import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
-import java.util.Deque;
+import java.util.Iterator;
 import java.util.Observable;
 
 public abstract class BasicBoard extends Observable implements GameBoard {
@@ -33,8 +32,7 @@ public abstract class BasicBoard extends Observable implements GameBoard {
 		return startFlow;
 	}
 
-	public abstract boolean draw(Deque<Pipe> pipes);
-	public abstract boolean draw(Solution pipes);
+	public abstract boolean draw(Iterator<Pipe> it);
 
 	public void clear() {
 		for(int i = 0; i < file.length; i++) {

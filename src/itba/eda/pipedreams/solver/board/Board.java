@@ -1,10 +1,9 @@
 package itba.eda.pipedreams.solver.board;
 
-import itba.eda.pipedreams.solver.algorithm.Solution;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
-import java.util.Deque;
+import java.util.Iterator;
 
 public class Board extends BasicBoard {
 	private final Tile[][] board;
@@ -112,45 +111,33 @@ public class Board extends BasicBoard {
 	}
 
 	@Override
-	public boolean draw(Deque<Pipe> pipes) {
-		if(pipes == null || pipes.size() == 0) {
-			return false;
-		}
-
+	public boolean draw(Iterator<Pipe> it) {
 		Point point = getStartPoint();
 		Dir flow = startFlow;
 		point.next(flow);
 
-		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
+
+		while(it.hasNext()) {
+			Pipe pipe = it.next();
+
 			flow = flow.opposite();
-			Tile tile = Tile.get(pipes.removeLast());
-			board[point.getRow()][point.getColumn()] = tile;
-			flow = tile.getPipe().flow(flow);
-			point.next(flow);
-		}
 
-		setChanged();
-
-		return true;
-	}
-
-	@Override
-	public boolean draw(Solution pipes) {
-		if(pipes == null || pipes.size() == 0) {
-			return false;
-		}
-
-		Point point = getStartPoint();
-		Dir flow = startFlow;
-		point.next(flow);
-
-		for(Pipe pipe : pipes) {
-			flow = flow.opposite();
 			Tile tile = Tile.get(pipe);
 			board[point.getRow()][point.getColumn()] = tile;
+
 			flow = pipe.flow(flow);
 			point.next(flow);
 		}
+
+//		for(Pipe pipe : pipes) {
+//			flow = flow.opposite();
+//
+//			Tile tile = Tile.get(pipe);
+//			board[point.getRow()][point.getColumn()] = tile;
+//
+//			flow = pipe.flow(flow);
+//			point.next(flow);
+//		}
 
 		setChanged();
 
