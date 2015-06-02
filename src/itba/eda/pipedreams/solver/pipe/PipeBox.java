@@ -1,12 +1,11 @@
 package itba.eda.pipedreams.solver.pipe;
 
 import java.util.Iterator;
-import java.util.Random;
 
-public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return BasicPipe?
+public class PipeBox extends BasicPipeBox { // TODO: return BasicPipe?
 	private int originalSize;
 
-	private static Pipe[] pipes = Pipe.values();
+	private static final Pipe[] pipes = Pipe.values();
 	private int[] sizes;
 
 	public PipeBox(int[] sizes) {
@@ -26,25 +25,34 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
 		this.originalSize += sizes[6];
 	}
 
-	@Override
-	public Pipe getPipe(int i) {
-		return pipes[i];
+	public Pipe getPipe(int pipe) {
+		return pipes[pipe];
 	}
 
 	@Override
-	public int getSize(int i) {
-		return sizes[i];
+	public int getSize(Pipe pipe) {
+		return sizes[pipe.ordinal()];
 	}
 
-	public void addOnePipe(int i) {
-		sizes[i]++;
+	public boolean hasPipe(Pipe pipe) {
+		return sizes[pipe.ordinal()] > 0;
 	}
 
-	public void removeOnePipe(int i) {
-		if(sizes[i] == 0) {
+	public boolean hasPipe(Pipe pipe, int amount) {
+		return sizes[pipe.ordinal()] >= amount;
+	}
+
+	@Override
+	public void addOnePipe(Pipe pipe) {
+		sizes[pipe.ordinal()]++;
+	}
+
+	@Override
+	public void removeOnePipe(Pipe pipe) {
+		if(sizes[pipe.ordinal()] == 0) {
 			return;
 		}
-		sizes[i]--;
+		sizes[pipe.ordinal()]--;
 	}
 
 	@Override
@@ -76,32 +84,6 @@ public class PipeBox implements Iterable<Pipe>, BasicPipeBox { // TODO: return B
 				throw new UnsupportedOperationException();
 			}
 		};
-	}
-
-	public static int[] shufflePipes() {
-		int[] map = new int[pipes.length];
-
-		for(int i=0; i < map.length; i++) {
-			map[i] = i;
-		}
-
-		Random rand = new Random();
-		for (int i = map.length - 1; i > 0; i--) {
-			int index = rand.nextInt(i + 1);
-			int aux = map[index];
-			map[index] = map[i];
-			map[i] = aux;
-		}
-
-		return map;
-	}
-
-    public boolean hasPipe(Pipe pipe) {
-        return sizes[pipe.ordinal()] > 0;
-    }
-
-	public boolean hasPipe(Pipe pipe, int size) {
-		return sizes[pipe.ordinal()] >= size;
 	}
 
 	@Override

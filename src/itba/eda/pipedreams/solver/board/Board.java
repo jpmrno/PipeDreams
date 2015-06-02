@@ -7,7 +7,7 @@ import itba.eda.pipedreams.solver.pipe.Pipe;
 import java.util.Deque;
 
 public class Board extends BasicBoard {
-	private Tile[][] board;
+	private final Tile[][] board;
 
 	public Board(String[] tiles) {
 		file = tiles.clone();
@@ -86,10 +86,7 @@ public class Board extends BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
-        if(!withinLimits(point)) {
-            return false;
-        }
-		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
+		return withinLimits(point) && board[point.getRow()][point.getColumn()] == Tile.EMPTY;
 	}
 
 	@Override

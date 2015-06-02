@@ -1,0 +1,38 @@
+<project name="PipeDreams Solver" default="dist" basedir=".">
+    <description>
+        PipeDreams game solver!
+    </description>
+
+    <property name="src" location="src"/>
+    <property name="build" location="bin"/>
+    <property name="imgs" location="src/img"/>
+
+    <!-- Compila el proyecto, deja los archivos class en el directorio bin -->
+    <target name="compile">
+        <mkdir dir="${build}"/>
+        <copy todir="${build}/img"><fileset dir="${imgs}/"/></copy>
+        <javac srcdir="${src}" destdir="${build}" classpath="lib/junit-4.7.jar"/>
+    </target>
+
+    <!-- Crea la documentacion en formato Javadoc, en el directorio doc. -->
+    <target name="doc" depends="compile">
+        <javadoc sourcepath="src" destdir="doc" classpath="lib/junit-4.7.jar"/>
+    </target>
+
+    <!-- Crea el jar ejecutable con todo el proyecto compilado. -->
+    <target name="dist" depends="compile, doc">
+        <jar destfile="PDSolver.jar" basedir="bin">
+            <manifest>
+                <attribute name="Main-Class" value="itba.eda.pipedreams.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Borra todos los archivos generados luego de compilar. -->
+    <target name="clean">
+        <delete dir="bin"/>
+        <delete dir="doc" />
+        <delete file="PDSolver.jar"/>
+    </target>
+
+</project>

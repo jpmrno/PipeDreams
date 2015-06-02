@@ -21,9 +21,9 @@ public class PDSolverArgs { // TODO: Static?
 	private int columns;
 	private String[] boardFile;
 
-	private int[] pipes; // TODO: List<Integer> items = Collections.unmodifiableList(Arrays.asList(0,1,2,3));
+	private int[] pipes;
 
-	public PDSolverArgs(String[] args) { // TODO: OK?
+	public PDSolverArgs(String[] args) {
 		if(args.length < 2 || args.length > 4) {
 			throw new IllegalArgumentException("Invalid number of arguments [2-4].");
 		}
@@ -137,7 +137,7 @@ public class PDSolverArgs { // TODO: Static?
 			boardFile = new String[rows];
 			for(int i = 0; i < rows; i++) {
 				line = br.readLine();
-				if(line == null || line.length() > columns) {
+				if(line == null || line.length() != columns) {
 					throw  new IllegalArgumentException();
 				}
 
@@ -173,29 +173,5 @@ public class PDSolverArgs { // TODO: Static?
 		columns = Integer.valueOf(first[1]);
 
 		return true;
-	}
-
-	private void print() { // TODO: remove it, for debugging proposes only
-		System.out.println(method == Method.EXACT ? "Metodo EXACT" : "Metodo APROX");
-
-		if(approxTime != 0) {
-			System.out.println("Tiempo: " + approxTime + ".");
-		}
-
-		if(progress) {
-			System.out.println("Con progress.");
-		}
-
-		System.out.println();
-		System.out.println("Filas: " + rows + " , Columns: " + columns + ".");
-		System.out.println();
-		for(String row : boardFile) {
-			System.out.println(row);
-		}
-		System.out.println();
-
-		for(int i = 0; i < pipes.length; i++) {
-			System.out.println("Pipe (#" + i + "): " + pipes[i] + ".");
-		}
 	}
 }

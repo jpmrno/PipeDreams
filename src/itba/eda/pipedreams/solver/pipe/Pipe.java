@@ -2,13 +2,8 @@ package itba.eda.pipedreams.solver.pipe;
 
 import itba.eda.pipedreams.solver.board.Dir;
 
-public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: inside PipeBox?
+public enum Pipe implements BasicPipe {
 	L1 {
-		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.NORTH || from == Dir.WEST;
-		}
-
 		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.NORTH)
@@ -20,11 +15,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 	},
 	L2 {
 		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.NORTH || from == Dir.EAST;
-		}
-
-		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.NORTH)
 				return Dir.EAST;
@@ -34,11 +24,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 		}
 	},
 	L3 {
-		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.EAST;
-		}
-
 		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.SOUTH)
@@ -50,11 +35,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 	},
 	L4 {
 		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.WEST;
-		}
-
-		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.SOUTH)
 				return Dir.WEST;
@@ -64,11 +44,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 		}
 	},
 	I1 {
-		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.SOUTH || from == Dir.NORTH;
-		}
-
 		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.SOUTH)
@@ -80,11 +55,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 	},
 	I2 {
 		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.EAST || from == Dir.WEST;
-		}
-
-		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.EAST)
 				return Dir.WEST;
@@ -94,11 +64,6 @@ public enum Pipe implements BasicPipe { // TODO: Remove canFlow()? && TODO: insi
 		}
 	},
 	CROSS {
-		@Override
-		public boolean canFlow(Dir from) {
-			return from == Dir.NORTH || from == Dir.SOUTH || from == Dir.EAST || from == Dir.WEST;
-		}
-
 		@Override
 		public Dir flow(Dir from) {
 			if(from == Dir.EAST)

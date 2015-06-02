@@ -1,9 +1,9 @@
 package itba.eda.pipedreams.uielements;
 
 import itba.eda.pipedreams.solver.basic.BoardDisplay;
-import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
+import itba.eda.pipedreams.solver.board.BasicBoard;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;

@@ -1,5 +1,6 @@
 package itba.eda.pipedreams.solver.basic;
 
+import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Board;
 import itba.eda.pipedreams.solver.engine.Engine;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
@@ -7,7 +8,7 @@ import itba.eda.pipedreams.solver.pipe.PipeBox;
 public class PDSolver { // Front/Back end mediator
 	private final BoardDisplay display;
 	private final PipeBox pipes; // TODO: Interfaces?
-	private final Board board; // TODO: Interfaces?
+	private final BasicBoard board; // TODO: Interfaces?
 	private final Engine engine;
 
 	public PDSolver(PDSolverArgs args, BoardDisplay display) { // TODO: Create PDSolverArguments here?

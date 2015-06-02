@@ -110,11 +110,11 @@ public class PDHillClimbing implements Algorithm {
 
 		for(int i = 0; i < pipeBox.length(); i++) {
 			Pipe pipe = pipeBox.getPipe(mapPipeBox[i]);
-			int size = pipeBox.getSize(mapPipeBox[i]);
+			int size = pipeBox.getSize(pipe);
 			Dir flow = pipe.flow(from);
 
 			if(flow != null && size > 0) {
-				pipeBox.removeOnePipe(mapPipeBox[i]);
+				pipeBox.removeOnePipe(pipe);
 				board.putPipe(pipe, point);
 				solution.add(pipe);
 
@@ -125,7 +125,7 @@ public class PDHillClimbing implements Algorithm {
 
 				solution.remove();
 				board.removePipe(point);
-				pipeBox.addOnePipe(mapPipeBox[i]);
+				pipeBox.addOnePipe(pipe);
 			}
 		}
 		return false;

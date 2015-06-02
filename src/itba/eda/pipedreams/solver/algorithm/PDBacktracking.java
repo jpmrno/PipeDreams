@@ -13,9 +13,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class PDBacktracking implements Algorithm {
-	private BasicBoard board;
-	private boolean withProgress;
-	private PipeBox pipeBox;
+	private final BasicBoard board;
+	private final boolean withProgress;
+	private final PipeBox pipeBox;
 
 	public PDBacktracking(BasicBoard board, PipeBox pipeBox, boolean withProgress) {
 		this.board = board;
@@ -67,11 +67,11 @@ public class PDBacktracking implements Algorithm {
 
 		for(int i = 0; i < pipeBox.length(); i++) {
 			Pipe pipe = pipeBox.getPipe(i);
-			int size = pipeBox.getSize(i);
+			int size = pipeBox.getSize(pipe);
 			Dir flow = pipe.flow(from);
 
 			if(flow != null && size > 0) {
-				pipeBox.removeOnePipe(i);
+				pipeBox.removeOnePipe(pipe);
 				board.putPipe(pipe, point);
 				currentPath.push(pipe);
 
@@ -84,7 +84,7 @@ public class PDBacktracking implements Algorithm {
 
 				currentPath.pop();
 				board.removePipe(point);
-				pipeBox.addOnePipe(i);
+				pipeBox.addOnePipe(pipe);
 			}
 		}
 	}

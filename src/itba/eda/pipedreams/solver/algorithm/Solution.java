@@ -3,6 +3,7 @@ package itba.eda.pipedreams.solver.algorithm;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Dir;
+import itba.eda.pipedreams.solver.pipe.BasicPipeBox;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
 
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Solution implements Iterable<Pipe>, Comparable<Solution> {
-	private Deque<Pipe> pipes;
+	private final Deque<Pipe> pipes;
 
 	public Solution() {
 		pipes = new LinkedList<>();
@@ -42,7 +43,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 
 			flow = flow.opposite();
 
-			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution); // TODO: Ver si clonar aca esta bien
+			int skip = Heuristics.apply(board, point.clone(), flow, pipeBox, solution);
 
 			if(solution.size() - skip > prevSolution.size() - prevSkip) {
 				prevSkip = skip;
@@ -60,33 +61,38 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		}
 
 		for(Pipe pipe : prevSolution) {
-			pipeBox.removeOnePipe(pipe.ordinal());
+			pipeBox.removeOnePipe(pipe);
 		}
 
-        Deque<Pipe> firstPart = new LinkedList<>();
-        Iterator<Pipe> it = pipes.descendingIterator();
-        for(i = 0; i < solutionIndex; i++) { // TODO: FEO?
-            firstPart.offer(it.next());
-        }
+        concat(prevSolution, this, solutionIndex, pipeBox, prevSkip);
 
-        Iterator<Pipe> auxIt = firstPart.descendingIterator();
-        while(auxIt.hasNext()) {
-            prevSolution.pipes.addLast(auxIt.next());
-        }
+		return prevSolution;
+	}
+
+	private static void concat(Solution ret, Solution sol, int index, BasicPipeBox pipeBox, int toAdd) {
+		Deque<Pipe> firstPart = new LinkedList<>();
+		Iterator<Pipe> it = sol.pipes.descendingIterator();
+		int i = 0;
+		for(; i < index; i++) {
+			firstPart.offer(it.next());
+		}
+
+		Iterator<Pipe> auxIt = firstPart.descendingIterator();
+		while(auxIt.hasNext()) {
+			ret.pipes.addLast(auxIt.next());
+		}
 
 		while(it.hasNext()) {
 			Pipe pipe = it.next();
 
-            if(i < solutionIndex + prevSkip) {
-				pipeBox.addOnePipe(pipe.ordinal());
+			if(i < index + toAdd) {
+				pipeBox.addOnePipe(pipe);
 			} else {
-				prevSolution.pipes.addFirst(pipe);
+				ret.pipes.addFirst(pipe);
 			}
 
-            i++;
+			i++;
 		}
-
-		return prevSolution;
 	}
 
 	@Override
@@ -98,11 +104,4 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 	public int compareTo(Solution o) {
 		return pipes.size() - o.pipes.size();
 	}
-
-    private void print(String which) { // TODO: DEBUGGING ONLY
-        for(Pipe each : this) {
-            System.out.print(each + " ");
-        }
-        System.out.println();
-    }
 }
