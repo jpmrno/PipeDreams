@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.solver.engine;
+package itba.eda.pipedreams.solver.algorithm;
 
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
@@ -32,8 +32,10 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 	public Solution bestNeighbor(BasicBoard board, PipeBox pipeBox) { // TODO: PartialSolution class?
 		Solution prevSolution = new Solution();
 		int prevSkip = 0, solutionIndex = -1, i = 0;
-		Point point = board.getStartPoint().getNext(board.getStartFlow());
+
+		Point point = board.getStartPoint();
 		Dir flow = board.getStartFlow();
+		point.next(flow);
 
 		for(Pipe pipe : this) {
 			Solution solution = new Solution();
@@ -49,7 +51,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 			}
 
 			flow = pipe.flow(flow);
-			point = point.getNext(flow);
+			point.next(flow);
 			i++;
 		}
 

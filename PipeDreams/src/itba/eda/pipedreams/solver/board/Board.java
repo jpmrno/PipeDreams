@@ -1,18 +1,13 @@
 package itba.eda.pipedreams.solver.board;
 
+import itba.eda.pipedreams.solver.algorithm.Solution;
 import itba.eda.pipedreams.solver.basic.Point;
-import itba.eda.pipedreams.solver.engine.Solution;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
 import java.util.Deque;
-import java.util.Observable;
 
-public class Board extends Observable implements BasicBoard {
-	private String[] file;
-
+public class Board extends BasicBoard {
 	private Tile[][] board;
-	private Point startPoint;
-	private Dir startFlow;
 
 	public Board(String[] tiles) {
 		file = tiles.clone();
@@ -20,7 +15,7 @@ public class Board extends Observable implements BasicBoard {
 
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[0].length(); j++) {
-				if(setPiece(tiles[i].charAt(j), i, j) == null) {
+				if(!setPiece(tiles[i].charAt(j), i, j)) {
 					throw new IllegalArgumentException("Invalid board. Too many starting points or has invalid tile.");
 				}
 			}
@@ -31,7 +26,8 @@ public class Board extends Observable implements BasicBoard {
 		}
 	}
 
-	private Tile setPiece(char c, int row, int column) {
+	@Override
+	protected boolean setPiece(char c, int row, int column) {
 		Tile piece;
 		c = Character.toUpperCase(c);
 
@@ -41,7 +37,7 @@ public class Board extends Observable implements BasicBoard {
 			case 'W':
 			case 'E':
 				if(startPoint != null) {
-					return null;
+					return false;
 				}
 				startFlow = Dir.getBySymbol(c);
 				startPoint = new Point(row, column);
@@ -54,11 +50,11 @@ public class Board extends Observable implements BasicBoard {
 				piece =  Tile.WALL;
 				break;
 			default:
-				return null;
+				return false;
 		}
 
 		board[row][column] = piece;
-		return piece;
+		return true;
 	}
 
 	@Override
@@ -90,7 +86,7 @@ public class Board extends Observable implements BasicBoard {
 
 	@Override
 	public boolean isEmpty(Point point) {
-        if(!withinLimits(point)) { //TODO: Se agrega para que en las heuristicas devuelvan falso y no haya que chequear si esta dentro de los limites
+        if(!withinLimits(point)) {
             return false;
         }
 		return board[point.getRow()][point.getColumn()] == Tile.EMPTY;
@@ -114,13 +110,54 @@ public class Board extends Observable implements BasicBoard {
 	}
 
 	@Override
-	public Point getStartPoint() {
-		return startPoint.clone();
+	public String getRepresentation(Point point) {
+		return board[point.getRow()][point.getColumn()].toString();
 	}
 
 	@Override
-	public Dir getStartFlow() {
-		return startFlow;
+	public boolean draw(Deque<Pipe> pipes) {
+		if(pipes == null || pipes.size() == 0) {
+			return false;
+		}
+
+		Point point = getStartPoint();
+		Dir flow = startFlow;
+		point.next(flow);
+
+		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
+			flow = flow.opposite();
+			Tile tile = Tile.get(pipes.removeLast());
+			board[point.getRow()][point.getColumn()] = tile;
+			flow = tile.getPipe().flow(flow);
+			point.next(flow);
+		}
+
+		setChanged();
+
+		return true;
+	}
+
+	@Override
+	public boolean draw(Solution pipes) {
+		if(pipes == null || pipes.size() == 0) {
+			return false;
+		}
+
+		Point point = getStartPoint();
+		Dir flow = startFlow;
+		point.next(flow);
+
+		for(Pipe pipe : pipes) {
+			flow = flow.opposite();
+			Tile tile = Tile.get(pipe);
+			board[point.getRow()][point.getColumn()] = tile;
+			flow = pipe.flow(flow);
+			point.next(flow);
+		}
+
+		setChanged();
+
+		return true;
 	}
 
 	@Override
@@ -135,70 +172,7 @@ public class Board extends Observable implements BasicBoard {
 		return ret.toString();
 	}
 
-	public void print() {
-		for(Tile[] row : board) {
-			for(Tile piece : row) {
-				System.out.print(piece.toString() + '\t');
-			}
-			System.out.println();
-		}
-	}
-
-	@Override
-	public String getRepresentation(Point point) {
-		return board[point.getRow()][point.getColumn()].toString();
-	}
-
-	public boolean draw(Deque<Pipe> pipes) {
-		if(pipes == null || pipes.size() == 0) {
-			return false;
-		}
-
-		Point point = getStartPoint().getNext(startFlow);
-		Dir flow = startFlow;
-
-		while(!pipes.isEmpty()) { // TODO: OK? & Errors?
-			flow = flow.opposite();
-			Tile tile = Tile.get(pipes.removeLast());
-			board[point.getRow()][point.getColumn()] = tile;
-			flow = tile.getPipe().flow(flow);
-			point = point.getNext(flow);
-		}
-
-		setChanged();
-
-		return true;
-	}
-
-	public boolean draw(Solution pipes) {
-		if(pipes == null || pipes.size() == 0) {
-			return false;
-		}
-
-		Point point = getStartPoint().getNext(startFlow);
-		Dir flow = startFlow;
-
-		for(Pipe pipe : pipes) {
-			flow = flow.opposite();
-			Tile tile = Tile.get(pipe);
-			board[point.getRow()][point.getColumn()] = tile;
-			flow = pipe.flow(flow);
-			point = point.getNext(flow);
-		}
-
-		setChanged();
-		return true;
-	}
-
-	public void clear() {
-		for(int i = 0; i < file.length; i++) {
-			for(int j = 0; j < file[0].length(); j++) {
-				setPiece(file[i].charAt(j), i, j);
-			}
-		}
-	}
-
-	private static enum Tile {
+	private static enum Tile implements BasicTile {
 		L1("1", Pipe.L1),
 		L2("2", Pipe.L2),
 		L3("3", Pipe.L3),
@@ -225,6 +199,7 @@ public class Board extends Observable implements BasicBoard {
 			this.pipe = pipe;
 		}
 
+		@Override
 		public Pipe getPipe() {
 			return pipe;
 		}

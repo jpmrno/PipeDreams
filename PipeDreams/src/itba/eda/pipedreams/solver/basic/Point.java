@@ -2,36 +2,13 @@ package itba.eda.pipedreams.solver.basic;
 
 import itba.eda.pipedreams.solver.board.Dir;
 
-public class Point {
+public class Point implements Cloneable {
     private int row;
     private int column;
 
     public Point(int row, int column) {
         this.row = row;
         this.column = column;
-    }
-
-    public Point getNext(Dir to)
-    {
-        Point point;
-
-        switch(to) {
-            case NORTH:
-                point = new Point(row - 1, column);
-                break;
-            case SOUTH:
-                point = new Point(row + 1, column);
-                break;
-            case WEST:
-                point = new Point(row, column - 1);
-                break;
-            case EAST:
-                point = new Point(row, column + 1);
-                break;
-            default:
-                throw new IllegalStateException();
-        }
-        return point;
     }
 
 	public void setRow(int row) {
@@ -43,52 +20,64 @@ public class Point {
 	}
 
 	public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
-	public Point clone() {
-		return new Point(row, column);
+		return row;
 	}
 
-    public Point goN() {
-        return new Point(row - 1, column);
+	public int getColumn() {
+		return column;
+	}
+
+    public Point next(Dir to) {
+		switch(to) {
+			case NORTH:
+				row--;
+				break;
+			case SOUTH:
+				row++;
+				break;
+			case WEST:
+				column--;
+				break;
+			case EAST:
+				column++;
+				break;
+			default:
+				throw new IllegalStateException();
+		}
+
+		return this;
     }
 
-    public Point goW() {
-        return new Point(row, column - 1);
-    }
+	public Point previous(Dir to) {
+		return next(to.opposite());
+	}
 
-    public Point goS() {
-        return new Point(row + 1, column);
-    }
+	public static Point getNext(Point point, Dir to) {
+		switch(to) {
+			case NORTH:
+				point = new Point(point.row - 1, point.column);
+				break;
+			case SOUTH:
+				point = new Point(point.row + 1, point.column);
+				break;
+			case WEST:
+				point = new Point(point.row, point.column - 1);
+				break;
+			case EAST:
+				point = new Point(point.row, point.column + 1);
+				break;
+			default:
+				throw new IllegalStateException();
+		}
+		return point;
+	}
 
-    public Point goE() {
-        return new Point(row, column + 1);
-    }
-
-    public Point goNE() {
-        return new Point(row -1 , column + 1);
-    }
-
-    public Point goNW() { return new Point(row -1 , column - 1); }
-
-    public Point goSW() {
-        return new Point(row + 1, column - 1);
-    }
-
-    public Point goSE() {
-        return new Point(row + 1, column + 1);
-    }
+	public static Point getPrevious(Point point, Dir dir) {
+		return getNext(point, dir.opposite());
+	}
 
 	@Override
-	public String toString() {
-		return "Point{" +
-				"row=" + row +
-				", column=" + column +
-				'}';
+	public Point clone() {
+		return new Point(row, column);
 	}
 }

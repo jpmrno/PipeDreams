@@ -1,4 +1,4 @@
-package itba.eda.pipedreams.solver.engine;
+package itba.eda.pipedreams.solver.algorithm;
 
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;

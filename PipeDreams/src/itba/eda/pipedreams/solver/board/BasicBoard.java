@@ -1,47 +1,50 @@
 package itba.eda.pipedreams.solver.board;
 
+import itba.eda.pipedreams.solver.algorithm.Solution;
 import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 
-public interface BasicBoard extends GameBoard {
-	Pipe getPipe(Point point);
-	boolean putPipe(Pipe pipe, Point point);
-	boolean removePipe(Point point);
+import java.util.Deque;
+import java.util.Observable;
 
-	boolean isEmpty(Point point);
-	boolean hasPipe(Point point);
-	boolean isBlocked(Point point, Dir from);
+public abstract class BasicBoard extends Observable implements GameBoard {
+	protected String[] file;
 
-	boolean withinLimits(Point point);
+	protected Point startPoint;
+	protected Dir startFlow;
 
-	Point getStartPoint();
-	Dir getStartFlow();
+	public abstract Pipe getPipe(Point point);
+	public abstract boolean putPipe(Pipe pipe, Point point);
+	public abstract boolean removePipe(Point point);
+	protected abstract boolean setPiece(char c, int row, int column);
 
-	static Point getNext(Point point, Dir dir) {
-		int row = point.getRow();
-		int column = point.getColumn();
+	public abstract boolean isEmpty(Point point);
+	public abstract boolean hasPipe(Point point);
+	public abstract boolean isBlocked(Point point, Dir from);
 
-		switch(dir) {
-			case NORTH:
-				point.setRow(row - 1);
-				break;
-			case SOUTH:
-				point.setRow(row + 1);
-				break;
-			case WEST:
-				point.setColumn(column - 1);
-				break;
-			case EAST:
-				point.setColumn(column + 1);
-				break;
-			default:
-				throw new IllegalStateException();
-		}
-		return point;
+	public abstract boolean withinLimits(Point point);
+
+	public Point getStartPoint() {
+		return startPoint.clone();
 	}
 
-	static Point getPrevious(Point point, Dir dir) {
-		return BasicBoard.getNext(point, dir.opposite());
+	public Dir getStartFlow() {
+		return startFlow;
+	}
+
+	public abstract boolean draw(Deque<Pipe> pipes);
+	public abstract boolean draw(Solution pipes);
+
+	public void clear() {
+		for(int i = 0; i < file.length; i++) {
+			for(int j = 0; j < file[0].length(); j++) {
+				setPiece(file[i].charAt(j), i, j);
+			}
+		}
+	}
+
+	protected interface BasicTile {
+		Pipe getPipe();
 	}
 }
