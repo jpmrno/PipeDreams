@@ -7,6 +7,10 @@ import itba.eda.pipedreams.solver.pipe.Pipe;
 import java.util.Iterator;
 import java.util.Observable;
 
+/**
+ * The basic structure of a game board. It has the main methods that every implementation should have.
+ */
+
 public abstract class BasicBoard extends Observable implements GameBoard {
 	protected String[] file;
 

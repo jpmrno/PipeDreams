@@ -60,7 +60,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 			return this;
 		}
 
-		for(Pipe pipe : prevSolution) {
+		for(Pipe pipe : prevSolution) { // TODO: Fix 2 cruces!
 			pipeBox.removeOnePipe(pipe);
 		}
 

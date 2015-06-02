@@ -63,7 +63,7 @@ public class Board extends BasicBoard {
 
 	@Override
 	public boolean putPipe(Pipe pipe, Point point) {
-		if(isEmpty(point)) { // TODO: Remove check?
+		if(isEmpty(point)) {
 			board[point.getRow()][point.getColumn()] = Tile.get(pipe);
 			setChanged();
 			return true;

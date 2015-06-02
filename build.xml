@@ -19,7 +19,7 @@
         <javadoc sourcepath="src" destdir="doc" classpath="lib/junit-4.7.jar"/>
     </target>
 
-    <!-- Crea el jar ejecutable con todo el proyecto compilado. -->
+    <!-- Crea el jar ejecutable con el proyecto compilado. -->
     <target name="dist" depends="compile, doc">
         <jar destfile="PDSolver.jar" basedir="bin">
             <manifest>

@@ -5,20 +5,15 @@ import itba.eda.pipedreams.solver.basic.GameBoard;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 import java.util.Observable;
 
-public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make this a Canvas & put in a ScrollPane
+public class BoardPane extends Canvas implements BoardDisplay {
 	private int i = 0;
 
 	private final int rows;
@@ -63,28 +58,6 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 		paint();
 	}
 
-	public void saveAsPng() {
-		if(i++ % 2 == 1) {
-			return;
-		}
-
-		System.out.println("ENTRE");
-
-		SnapshotParameters parameters = new SnapshotParameters();
-		parameters.setViewport(new Rectangle2D(50, 50, 100, 100));
-
-		WritableImage image = this.snapshot(parameters, null);
-
-		// TODO: probably use a file chooser here
-		File file = new File("imgs/chart" + i + ".png");
-
-		try {
-			ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-		} catch (IOException e) {
-			System.out.println("ERROR FEO");
-		}
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
 		Platform.runLater(new Runnable() {
@@ -95,7 +68,7 @@ public class BoardPane extends Canvas implements BoardDisplay { // TODO: Make th
 		});
 	}
 
-	private enum GameTile { // TODO: Here? Better way? Check!
+	private enum GameTile {
 		L1("/img/L1.png"),
 		L2("/img/L2.png"),
 		L3("/img/L3.png"),

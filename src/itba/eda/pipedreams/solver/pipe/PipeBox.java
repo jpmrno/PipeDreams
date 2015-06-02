@@ -2,7 +2,7 @@ package itba.eda.pipedreams.solver.pipe;
 
 import java.util.Iterator;
 
-public class PipeBox extends BasicPipeBox { // TODO: return BasicPipe?
+public class PipeBox extends BasicPipeBox {
 	private int originalSize;
 
 	private static final Pipe[] pipes = Pipe.values();
