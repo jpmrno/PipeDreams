@@ -116,7 +116,6 @@ public class Board extends BasicBoard {
 		Dir flow = startFlow;
 		point.next(flow);
 
-
 		while(it.hasNext()) {
 			Pipe pipe = it.next();
 
@@ -128,16 +127,6 @@ public class Board extends BasicBoard {
 			flow = pipe.flow(flow);
 			point.next(flow);
 		}
-
-//		for(Pipe pipe : pipes) {
-//			flow = flow.opposite();
-//
-//			Tile tile = Tile.get(pipe);
-//			board[point.getRow()][point.getColumn()] = tile;
-//
-//			flow = pipe.flow(flow);
-//			point.next(flow);
-//		}
 
 		setChanged();
 

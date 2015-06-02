@@ -82,6 +82,7 @@ public enum Heuristics implements BasicHeuristic {
 					}
 				}
 			}
+
 			return 0;
 		}
 	},
@@ -343,9 +344,17 @@ public enum Heuristics implements BasicHeuristic {
 								if(nextPipe == Pipe.L2) {
 									sol.add(Pipe.L1);
 									sol.add(Pipe.L3);
-								} else if(nextPipe == Pipe.L4) {
+									sol.add(nextPipe);
+									sol.add(Pipe.I2);
+									return 2;
+								}
+
+								if(nextPipe == Pipe.L4) {
 									sol.add(Pipe.L3);
 									sol.add(Pipe.L1);
+									sol.add(nextPipe);
+									sol.add(Pipe.I2);
+									return 2;
 								}
 							}
 
@@ -353,17 +362,19 @@ public enum Heuristics implements BasicHeuristic {
 								if(nextPipe == Pipe.L1) {
 									sol.add(Pipe.L2);
 									sol.add(Pipe.L4);
-								} else if(nextPipe == Pipe.L3) {
+									sol.add(nextPipe);
+									sol.add(Pipe.I2);
+									return 2;
+								}
+
+								if(nextPipe == Pipe.L3) {
 									sol.add(Pipe.L4);
 									sol.add(Pipe.L2);
-
+									sol.add(nextPipe);
+									sol.add(Pipe.I2);
+									return 2;
 								}
 							}
-
-							sol.add(nextPipe);
-							sol.add(Pipe.I2);
-
-							return 2;
 						}
 					}
 				}
@@ -390,7 +401,9 @@ public enum Heuristics implements BasicHeuristic {
 							}
 
 							return 2;
-						} else if(board.isEmpty(Point.getNext(p, Dir.SOUTH)) && board.isEmpty(Point.getNext(nextPoint, Dir.SOUTH))) {
+						}
+
+						if(board.isEmpty(Point.getNext(p, Dir.SOUTH)) && board.isEmpty(Point.getNext(nextPoint, Dir.SOUTH))) {
 							Iterator<Pipe> it = (from == Dir.WEST) ? replace2.descendingIterator() : replace2.iterator();
 
 							while(it.hasNext()) {
@@ -410,9 +423,16 @@ public enum Heuristics implements BasicHeuristic {
 								if(nextPipe == Pipe.L2) {
 									sol.add(Pipe.L3);
 									sol.add(Pipe.L1);
-								} else if(nextPipe == Pipe.L4) {
+									sol.add(nextPipe);
+									sol.add(Pipe.I1);
+									return 2;
+								}
+								if(nextPipe == Pipe.L4) {
 									sol.add(Pipe.L1);
 									sol.add(Pipe.L3);
+									sol.add(nextPipe);
+									sol.add(Pipe.I1);
+									return 2;
 								}
 							}
 
@@ -420,16 +440,18 @@ public enum Heuristics implements BasicHeuristic {
 								if(nextPipe == Pipe.L1) {
 									sol.add(Pipe.L4);
 									sol.add(Pipe.L2);
-								} else if(nextPipe == Pipe.L3) {
+									sol.add(nextPipe);
+									sol.add(Pipe.I1);
+									return 2;
+								}
+								if(nextPipe == Pipe.L3) {
 									sol.add(Pipe.L2);
 									sol.add(Pipe.L4);
+									sol.add(nextPipe);
+									sol.add(Pipe.I1);
+									return 2;
 								}
 							}
-
-							sol.add(nextPipe);
-							sol.add(Pipe.I1);
-
-							return 2;
 						}
 					}
 				}

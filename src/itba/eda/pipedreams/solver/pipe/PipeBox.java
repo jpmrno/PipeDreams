@@ -22,7 +22,7 @@ public class PipeBox extends BasicPipeBox {
 			this.sizes[i] = sizes[i];
 			this.originalSize += sizes[i];
 		}
-		this.originalSize += sizes[6];
+		this.originalSize += sizes[Pipe.CROSS.ordinal()];
 	}
 
 	public Pipe getPipe(int pipe) {
@@ -52,6 +52,7 @@ public class PipeBox extends BasicPipeBox {
 		if(sizes[pipe.ordinal()] == 0) {
 			return;
 		}
+
 		sizes[pipe.ordinal()]--;
 	}
 

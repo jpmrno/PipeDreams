@@ -32,6 +32,4 @@ public abstract class BasicPipeBox implements Cloneable, Iterable<Pipe> {
 
 		return map;
 	}
-
-	public abstract BasicPipeBox clone();
 }

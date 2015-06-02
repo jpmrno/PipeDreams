@@ -24,7 +24,6 @@ public class PDBacktracking implements Algorithm {
 		Solution currPath = new Solution();
 		backtrackingRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), currPath, longestPath);
 
-		System.out.println(longestPath);
 		board.draw(longestPath.descendingIterator());
 		board.notifyObservers();
 
@@ -40,7 +39,7 @@ public class PDBacktracking implements Algorithm {
 		}
 
 		if(!board.withinLimits(point)) {
-			if(currentPath.size() > longestPath.size()) {
+			if(currentPath.compareTo(longestPath) > 0) {
 				Solution.copy(currentPath, longestPath);
 			}
 

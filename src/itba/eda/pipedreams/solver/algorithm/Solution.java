@@ -3,7 +3,6 @@ package itba.eda.pipedreams.solver.algorithm;
 import itba.eda.pipedreams.solver.basic.Point;
 import itba.eda.pipedreams.solver.board.BasicBoard;
 import itba.eda.pipedreams.solver.board.Dir;
-import itba.eda.pipedreams.solver.pipe.BasicPipeBox;
 import itba.eda.pipedreams.solver.pipe.Pipe;
 import itba.eda.pipedreams.solver.pipe.PipeBox;
 
@@ -60,8 +59,16 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 			return this;
 		}
 
-		for(Pipe pipe : prevSolution) { // TODO: Fix 2 cruces!
-			pipeBox.removeOnePipe(pipe);
+		boolean cross = false;
+		for(Pipe pipe : prevSolution) {
+			if(pipe == Pipe.CROSS) {
+				if(!cross) {
+					cross = true;
+					pipeBox.removeOnePipe(pipe);
+				}
+			} else {
+				pipeBox.removeOnePipe(pipe);
+			}
 		}
 
         join(prevSolution, this, solutionIndex, pipeBox, prevSkip);
@@ -94,7 +101,7 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		return pipes.size() - o.pipes.size();
 	}
 
-	private static void join(Solution ret, Solution sol, int index, BasicPipeBox pipeBox, int toAdd) {
+	private static void join(Solution ret, Solution sol, int index, PipeBox pipeBox, int toAdd) {
 		Deque<Pipe> firstPart = new LinkedList<Pipe>();
 		Iterator<Pipe> it = sol.iterator();
 		int i = 0;
@@ -104,6 +111,8 @@ public class Solution implements Iterable<Pipe>, Comparable<Solution> {
 		}
 
 		Iterator<Pipe> auxIt = firstPart.descendingIterator();
+
+
 		while(auxIt.hasNext()) {
 			ret.pipes.addLast(auxIt.next());
 		}

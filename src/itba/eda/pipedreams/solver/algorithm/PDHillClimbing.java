@@ -39,35 +39,32 @@ public class PDHillClimbing implements Algorithm {
 
 			localSolution = randomSolution();
 
-			if(localSolution == null) {
-				timer.stop();
-				return 0;
-			}
-
-			if(withProgress) {
-				board.notifyObservers();
-				Thread.sleep(Engine.DELAY);
-			}
-
-			do {
-				betterFound = false;
-				Solution solution = localSolution.bestNeighbor(board, pipeBox);
-
-				if(solution.compareTo(localSolution) > 0) {
-					localSolution = solution;
-					betterFound = true;
-
-					board.draw(localSolution.iterator());
-
-					if(withProgress) {
-						board.notifyObservers();
-						Thread.sleep(Engine.DELAY);
-					}
+			if(localSolution != null) {
+				if(withProgress) {
+					board.notifyObservers();
+					Thread.sleep(Engine.DELAY);
 				}
-			} while(betterFound && hasTime());
 
-			if(bestSolution == null || localSolution.compareTo(bestSolution) > 0) {
-				bestSolution = localSolution;
+				do {
+					betterFound = false;
+					Solution solution = localSolution.bestNeighbor(board, pipeBox);
+
+					if(solution.compareTo(localSolution) > 0) {
+						localSolution = solution;
+						betterFound = true;
+
+						board.draw(localSolution.iterator());
+
+						if(withProgress) {
+							board.notifyObservers();
+							Thread.sleep(Engine.DELAY);
+						}
+					}
+				} while(betterFound && hasTime());
+
+				if(bestSolution == null || localSolution.compareTo(bestSolution) > 0) {
+					bestSolution = localSolution;
+				}
 			}
 		}
 		timer.stop();
@@ -85,16 +82,16 @@ public class PDHillClimbing implements Algorithm {
 
 	private Solution randomSolution() {
 		Solution solution = new Solution();
+		int[] mapPipeBox = PipeBox.shufflePipes();
 
-		if(randomSolutionRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), solution)) {
+		if(randomSolutionRec(board.getStartPoint().next(board.getStartFlow()), board.getStartFlow(), solution, mapPipeBox)) {
 			return solution;
 		}
 
 		return null;
 	}
 
-	private boolean randomSolutionRec(Point point, Dir to, Solution solution) {
-		int[] mapPipeBox = PipeBox.shufflePipes();
+	private boolean randomSolutionRec(Point point, Dir to, Solution solution, int[] mapPipeBox) {
 		Dir from = to.opposite();
 
 		if(!board.withinLimits(point)) {
@@ -106,17 +103,14 @@ public class PDHillClimbing implements Algorithm {
 				Pipe pipe = board.getPipe(point);
 				solution.add(pipe);
 
-				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution)) {
+				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
 					return true;
 				}
-
 				point.previous(pipe.flow(from));
-				solution.remove();
 
-				if(!hasTime()) {
-					return false;
-				}
+				solution.remove();
 			}
+
 			return false;
 		}
 
@@ -130,7 +124,7 @@ public class PDHillClimbing implements Algorithm {
 				board.putPipe(pipe, point);
 				solution.add(pipe);
 
-				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution)) {
+				if(randomSolutionRec(point.next(pipe.flow(from)), pipe.flow(from), solution, mapPipeBox)) {
 					return true;
 				}
 				point.previous(pipe.flow(from));
@@ -138,13 +132,14 @@ public class PDHillClimbing implements Algorithm {
 				solution.remove();
 				board.removePipe(point);
 				pipeBox.addOnePipe(pipe);
-
-				if(!hasTime()) {
-					return false;
-				}
 			}
 		}
+
 		return false;
+	}
+
+	private boolean bestSolution(Solution longestPath) {
+		return longestPath.size() == pipeBox.getLongestPossible();
 	}
 
 	private boolean hasTime() {
