@@ -49,10 +49,6 @@ public class PipeBox extends BasicPipeBox {
 
 	@Override
 	public void removeOnePipe(Pipe pipe) {
-		if(sizes[pipe.ordinal()] == 0) {
-			return;
-		}
-
 		sizes[pipe.ordinal()]--;
 	}
 
